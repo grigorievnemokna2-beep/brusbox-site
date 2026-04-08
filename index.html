@@ -961,6 +961,349 @@
     </div>
   </div>
 
+  <!-- ====== CALCULATOR V2 — Preview (Alpine.js style) ====== -->
+  <section class="section" style="background:var(--bg); padding:80px 0;">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:40px;">
+        <div class="kicker-center">Новый калькулятор</div>
+        <h2 class="title">Вариант калькулятора</h2>
+      </div>
+      <div class="qz" id="qzApp">
+        <div class="qz__bar"><div class="qz__bar-fill" id="qzBarFill"></div></div>
+        <div class="qz__body" id="qzBody"></div>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .qz {
+      background:#fff;
+      border-radius:20px;
+      box-shadow:0 20px 50px rgba(18,18,28,0.08);
+      border:1px solid rgba(15,23,42,0.06);
+      max-width:820px;
+      margin:0 auto;
+      overflow:hidden;
+      min-height:420px;
+      display:flex;
+      flex-direction:column;
+    }
+    .qz__bar {
+      width:100%;height:3px;background:#f1f1f5;
+    }
+    .qz__bar-fill {
+      height:100%;background:var(--text,#1f1f24);
+      transition:width 500ms ease;
+      width:0%;
+    }
+    .qz__body {
+      padding:40px 48px;
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+    }
+    .qz__title {
+      font-size:24px;font-weight:800;color:var(--text,#1f1f24);
+      margin-bottom:28px;
+    }
+    .qz__grid {
+      display:grid;gap:14px;
+    }
+    .qz__grid--3 { grid-template-columns:repeat(3,1fr); }
+    .qz__grid--2 { grid-template-columns:repeat(2,1fr); }
+    .qz__grid--4 { grid-template-columns:repeat(4,1fr); }
+    .qz__card {
+      background:#fff;
+      border:1px solid #e5e5ea;
+      border-radius:16px;
+      padding:28px 20px;
+      text-align:center;
+      cursor:pointer;
+      transition:all 200ms ease;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:12px;
+      min-height:160px;
+    }
+    .qz__card:hover {
+      border-color:var(--text,#1f1f24);
+      box-shadow:0 8px 24px rgba(0,0,0,0.08);
+      transform:translateY(-2px);
+    }
+    .qz__card:active { transform:scale(0.97); }
+    .qz__card-icon {
+      width:48px;height:48px;
+      color:#b0b0b8;
+      transition:color 200ms ease;
+    }
+    .qz__card:hover .qz__card-icon { color:var(--text,#1f1f24); }
+    .qz__card-label {
+      font-size:16px;font-weight:700;color:var(--text,#1f1f24);
+    }
+    .qz__card-sub {
+      font-size:11px;font-weight:600;color:#9898a3;
+      text-transform:uppercase;letter-spacing:0.05em;
+    }
+    .qz__back {
+      background:none;border:none;
+      color:#9898a3;font-size:13px;font-weight:700;
+      cursor:pointer;font-family:inherit;
+      padding:0;margin-top:24px;
+      text-transform:uppercase;letter-spacing:0.06em;
+      transition:color 200ms;
+    }
+    .qz__back:hover { color:var(--text,#1f1f24); }
+    /* Phone step */
+    .qz__center { text-align:center;padding:20px 0; }
+    .qz__icon-circle {
+      width:56px;height:56px;border-radius:50%;
+      background:var(--text,#1f1f24);color:#fff;
+      display:grid;place-items:center;
+      margin:0 auto 20px;
+    }
+    .qz__heading {
+      font-size:28px;font-weight:800;color:var(--text,#1f1f24);
+      margin-bottom:8px;
+    }
+    .qz__desc {
+      font-size:14px;color:var(--muted,#6f6f79);
+      max-width:360px;margin:0 auto 28px;line-height:1.6;
+    }
+    .qz__form {
+      max-width:360px;margin:0 auto;
+      display:flex;flex-direction:column;gap:14px;
+    }
+    .qz__input {
+      width:100%;padding:16px 20px;
+      background:#fff;
+      border:1px solid #e5e5ea;
+      border-radius:12px;
+      font-size:16px;color:var(--text,#1f1f24);
+      font-family:inherit;font-weight:600;
+      outline:none;transition:border-color 200ms, box-shadow 200ms;
+    }
+    .qz__input:focus {
+      border-color:var(--text,#1f1f24);
+      box-shadow:0 0 0 3px rgba(31,31,36,0.08);
+    }
+    .qz__input::placeholder { color:#b0b0b8; }
+    .qz__submit {
+      width:100%;padding:16px;
+      background:var(--text,#1f1f24);color:#fff;
+      border:none;border-radius:12px;
+      font-size:16px;font-weight:800;
+      cursor:pointer;font-family:inherit;
+      transition:all 200ms;
+      box-shadow:0 8px 20px rgba(0,0,0,0.12);
+    }
+    .qz__submit:hover { background:#000;transform:translateY(-1px); }
+    .qz__fine {
+      font-size:11px;color:#b0b0b8;margin-top:4px;
+    }
+    /* Fade-in animation */
+    .qz__fade {
+      animation:qzFade 300ms ease;
+    }
+    @keyframes qzFade {
+      from { opacity:0; transform:translateX(12px); }
+      to { opacity:1; transform:translateX(0); }
+    }
+    @media (max-width:768px){
+      .qz__body { padding:28px 20px; }
+      .qz__grid--3, .qz__grid--4 { grid-template-columns:1fr; }
+      .qz__grid--2 { grid-template-columns:1fr; }
+      .qz__card {
+        flex-direction:row;
+        text-align:left;
+        justify-content:flex-start;
+        min-height:auto;
+        padding:18px 20px;
+        gap:16px;
+      }
+      .qz__card-icon { width:40px;height:40px;flex-shrink:0; }
+      .qz__title { font-size:20px; margin-bottom:20px; }
+      .qz__heading { font-size:24px; }
+    }
+  </style>
+
+  <script>
+  (function(){
+    var body = document.getElementById('qzBody');
+    var barFill = document.getElementById('qzBarFill');
+    if(!body) return;
+
+    var QUIZ = {
+      product: { title:'1. Что вас интересует?', options:[
+        {value:'windows', label:'Окна', sub:'Квартира, дом, дача', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/></svg>'},
+        {value:'balconyBlock', label:'Балконный блок', sub:'Дверь + окно', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="9" height="18" rx="1"/><rect x="13" y="3" width="9" height="18" rx="1"/><line x1="13" y1="12" x2="22" y2="12"/></svg>'},
+        {value:'balconyWindows', label:'Остекление балкона', sub:'Балкон / лоджия', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="8" y1="4" x2="8" y2="20"/><line x1="16" y1="4" x2="16" y2="20"/></svg>'},
+        {value:'doors', label:'Двери ПВХ', sub:'Входные и межкомнатные', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="2" width="16" height="20" rx="2"/><circle cx="15" cy="12" r="1" fill="currentColor"/></svg>'}
+      ]},
+      branches: {
+        windows:[
+          {key:'place', title:'2. Куда нужны окна?', options:[
+            {value:'Квартира',label:'В квартиру',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="8" width="16" height="14" rx="1"/><path d="M12 2L2 8h20L12 2z"/></svg>'},
+            {value:'Дом',label:'В частный дом',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12l9-9 9 9"/><path d="M5 10v10a1 1 0 001 1h12a1 1 0 001-1V10"/></svg>'},
+            {value:'Дача',label:'На дачу',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/><path d="M9 21v-6h6v6"/></svg>'}
+          ]},
+          {key:'type', title:'3. Какое окно?', options:[
+            {value:'Одностворчатое',label:'Одностворчатое',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="3" width="14" height="18" rx="2"/></svg>'},
+            {value:'Двухстворчатое',label:'Двухстворчатое',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/></svg>'},
+            {value:'Трёхстворчатое',label:'Трёхстворчатое',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>'}
+          ]}
+        ],
+        balconyBlock:[{key:'condition', title:'2. Замена или новый?', options:[
+          {value:'Замена',label:'Замена старого блока',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 105.64-8.36L3 4"/></svg>'},
+          {value:'Новый',label:'Новый проём',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>'}
+        ]}],
+        balconyWindows:[{key:'shape', title:'2. Форма балкона?', options:[
+          {value:'Прямой',label:'Прямой',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="6" width="18" height="12" rx="1"/></svg>'},
+          {value:'Угловой',label:'Угловой',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h12v12H3V6z"/><path d="M15 6l6 6v6h-6"/></svg>'},
+          {value:'П-образный',label:'П-образный',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16v4H4V6z"/><rect x="4" y="10" width="6" height="8"/><rect x="14" y="10" width="6" height="8"/></svg>'}
+        ]}],
+        doors:[{key:'place', title:'2. Куда нужна дверь?', options:[
+          {value:'Улица',label:'На улицу',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>'},
+          {value:'Балкон',label:'На балкон',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="4" y1="12" x2="20" y2="12"/></svg>'},
+          {value:'Внутри',label:'Внутри помещения',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12l9-9 9 9"/><path d="M5 10v10a1 1 0 001 1h12a1 1 0 001-1V10"/><rect x="9" y="14" width="6" height="7"/></svg>'}
+        ]}]
+      }
+    };
+
+    var state = { product:null, si:0, answers:{}, phone:'', done:false };
+
+    function getBranch(){ return state.product ? (QUIZ.branches[state.product]||[]) : []; }
+    function totalSteps(){ return 1 + getBranch().length + 1; }
+    function currentStep(){
+      if(!state.product) return 1;
+      if(state.si < getBranch().length) return state.si + 2;
+      return totalSteps();
+    }
+
+    function updateBar(){
+      var pct = (currentStep() / totalSteps()) * 100;
+      if(state.done) pct = 100;
+      barFill.style.width = pct + '%';
+    }
+
+    function render(){
+      updateBar();
+
+      if(state.done){
+        body.innerHTML = '<div class="qz__center qz__fade">'+
+          '<div class="qz__icon-circle"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>'+
+          '<div class="qz__heading">Спасибо!</div>'+
+          '<div class="qz__desc">Ваш номер принят.<br>Менеджер свяжется с вами в ближайшее время.</div>'+
+          '<button class="qz__back" onclick="qzReset()">В начало</button></div>';
+        return;
+      }
+
+      // Product step
+      if(!state.product){
+        var h = '<div class="qz__fade"><div class="qz__title">'+QUIZ.product.title+'</div><div class="qz__grid qz__grid--4">';
+        QUIZ.product.options.forEach(function(o){
+          h+='<div class="qz__card" data-val="'+o.value+'" data-label="'+o.label+'">'+
+            '<div class="qz__card-icon">'+o.icon+'</div>'+
+            '<div><div class="qz__card-label">'+o.label+'</div><div class="qz__card-sub">'+o.sub+'</div></div></div>';
+        });
+        h+='</div></div>';
+        body.innerHTML = h;
+        body.querySelectorAll('.qz__card').forEach(function(c){
+          c.addEventListener('click', function(){
+            state.product = c.dataset.val;
+            state.si = 0; state.answers = {};
+            render();
+          });
+        });
+        return;
+      }
+
+      // Branch steps
+      var steps = getBranch();
+      if(state.si < steps.length){
+        var st = steps[state.si];
+        var cols = st.options.length <= 2 ? 'qz__grid--2' : 'qz__grid--3';
+        var h = '<div class="qz__fade"><div class="qz__title">'+st.title+'</div><div class="qz__grid '+cols+'">';
+        st.options.forEach(function(o){
+          h+='<div class="qz__card" data-val="'+o.value+'">'+
+            '<div class="qz__card-icon">'+(o.icon||'')+'</div>'+
+            '<div class="qz__card-label">'+o.label+'</div></div>';
+        });
+        h+='</div><button class="qz__back" onclick="qzBack()">← Назад</button></div>';
+        body.innerHTML = h;
+        body.querySelectorAll('.qz__card').forEach(function(c){
+          c.addEventListener('click', function(){
+            state.answers[st.key] = c.dataset.val;
+            state.si++;
+            render();
+          });
+        });
+        return;
+      }
+
+      // Phone step
+      body.innerHTML = '<div class="qz__center qz__fade">'+
+        '<div class="qz__icon-circle"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>'+
+        '<div class="qz__heading">Готово!</div>'+
+        '<div class="qz__desc">Мы подберём лучший вариант.<br>Введите номер для расчёта.</div>'+
+        '<form class="qz__form" id="qzForm">'+
+          '<input class="qz__input" type="tel" id="qzPhone" placeholder="+375 (__) ___-__-__" required>'+
+          '<button type="submit" class="qz__submit">Получить расчёт</button>'+
+          '<div class="qz__fine">Конфиденциально. Перезвоним за 5 мин.</div>'+
+        '</form>'+
+        '<button class="qz__back" onclick="qzBack()" style="margin-top:20px">← Назад</button></div>';
+
+      var phoneInput = document.getElementById('qzPhone');
+      phoneInput.addEventListener('focus', function(){
+        if(!this.value) this.value = '+375 (';
+      });
+      phoneInput.addEventListener('input', function(e){
+        var val = e.target.value.replace(/\D/g,'');
+        if(!val.startsWith('375')) val = val.length>0?'375'+val:'375';
+        val = val.substring(0,12);
+        var f='';
+        if(val.length>0) f+='+'+val.substring(0,3);
+        if(val.length>=4) f+=' ('+val.substring(3,5);
+        if(val.length>=6) f+=') '+val.substring(5,8);
+        if(val.length>=9) f+='-'+val.substring(8,10);
+        if(val.length>=11) f+='-'+val.substring(10,12);
+        this.value = f;
+      });
+      phoneInput.addEventListener('keydown', function(e){
+        if(e.key==='Backspace' && this.value.length<=6) e.preventDefault();
+      });
+
+      document.getElementById('qzForm').addEventListener('submit', function(e){
+        e.preventDefault();
+        state.phone = document.getElementById('qzPhone').value;
+        state.done = true;
+        render();
+      });
+    }
+
+    window.qzBack = function(){
+      if(!state.product) return;
+      if(state.si > 0){
+        var steps = getBranch();
+        if(steps[state.si-1]) delete state.answers[steps[state.si-1].key];
+        state.si--;
+      } else {
+        state.product = null; state.answers = {}; state.si = 0;
+      }
+      render();
+    };
+
+    window.qzReset = function(){
+      state = { product:null, si:0, answers:{}, phone:'', done:false };
+      render();
+    };
+
+    render();
+  })();
+  </script>
+
   <!-- ====== INSTALLMENT V2 — Preview ====== -->
   <section class="section" style="background:#0b0b0b; padding:80px 0;">
     <div class="container">
