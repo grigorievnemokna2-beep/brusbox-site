@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cp -r \"c:/Users/User/OneDrive/Desktop/Сайт Brusbox\" \"c:/Users/User/OneDrive/Desktop/Сайт Brusbox — Вариант A\")",
+      "Bash(cp -r \"c:/Users/User/OneDrive/Desktop/Сайт Brusbox\" \"c:/Users/User/OneDrive/Desktop/Сайт Brusbox — Вариант B\")"
+    ]
+  }
+}

@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Окна Brusbox — Витебск</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    /* ====== Quiz Calculator ====== */
+    .gs-wrap {
+      background:#111118;
+      border-radius:24px;
+      padding:40px 44px 36px;
+      max-width:760px;
+      margin:0 auto;
+      position:relative;
+      overflow:hidden;
+    }
+    .gs-wrap::before {
+      content:'';position:absolute;top:-80px;right:-80px;
+      width:300px;height:300px;
+      background:radial-gradient(circle,rgba(120,20,20,0.5),transparent 70%);
+      border-radius:50%;pointer-events:none;
+    }
+    .gs-wrap::after {
+      content:'';position:absolute;bottom:-60px;left:-60px;
+      width:240px;height:240px;
+      background:radial-gradient(circle,rgba(120,20,20,0.35),transparent 70%);
+      border-radius:50%;pointer-events:none;
+    }
+    /* Steps progress */
+    .gs-steps { display:flex;gap:6px;align-items:center;justify-content:center;margin-bottom:32px;position:relative;z-index:1; }
+    .gs-step-dot {
+      width:34px;height:34px;border-radius:50%;
+      display:grid;place-items:center;
+      font-size:13px;font-weight:800;
+      transition:all 300ms ease;
+    }
+    .gs-step-dot.done,
+    .gs-step-dot.current {
+      background:#dc2626;color:#fff;
+    }
+    .gs-step-dot.current { box-shadow:0 0 14px rgba(220,38,38,0.5); }
+    .gs-step-dot.upcoming {
+      background:rgba(255,255,255,0.06);
+      color:rgba(255,255,255,0.3);
+    }
+    /* Question */
+    .gs-question {
+      background:rgba(255,255,255,0.03);
+      border-left:3px solid #dc2626;
+      border-radius:14px;
+      padding:24px 28px;
+      margin-bottom:24px;
+      text-align:left;
+      position:relative;z-index:1;
+    }
+    .gs-question__text {
+      font-size:22px;font-weight:800;color:#fff;line-height:1.4;
+    }
+    /* Options 2×2 */
+    .gs-opts {
+      display:grid;grid-template-columns:repeat(2,1fr);
+      gap:12px;margin-bottom:28px;
+      position:relative;z-index:1;
+    }
+    .gs-opt {
+      display:flex;align-items:center;gap:14px;
+      background:rgba(255,255,255,0.04);
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius:14px;
+      padding:18px 18px;
+      cursor:pointer;transition:all 200ms ease;
+    }
+    .gs-opt:hover {
+      background:rgba(220,38,38,0.08);
+      border-color:rgba(220,38,38,0.25);
+    }
+    .gs-opt.selected {
+      background:#dc2626;border-color:#dc2626;
+      box-shadow:0 0 20px rgba(220,38,38,0.3);
+    }
+    .gs-opt__letter {
+      width:36px;height:36px;border-radius:50%;flex-shrink:0;
+      background:#dc2626;color:#fff;
+      font-size:14px;font-weight:800;
+      display:grid;place-items:center;
+      transition:background 200ms ease;
+    }
+    .gs-opt.selected .gs-opt__letter { background:rgba(255,255,255,0.2); }
+    .gs-opt__text { font-size:15px;font-weight:700;color:#fff; }
+    .gs-opt__sub {
+      font-size:11px;font-weight:600;color:rgba(255,255,255,0.35);
+      margin-top:2px;
+    }
+    .gs-opt.selected .gs-opt__sub { color:rgba(255,255,255,0.7); }
+    /* Bottom */
+    .gs-bottom {
+      display:flex;align-items:center;justify-content:space-between;
+      position:relative;z-index:1;
+    }
+    .gs-back-link {
+      color:rgba(255,255,255,0.35);font-size:13px;font-weight:700;
+      cursor:pointer;transition:color 200ms ease;
+      background:none;border:none;padding:0;
+      letter-spacing:0.04em;
+    }
+    .gs-back-link:hover { color:#f87171; }
+    .gs-answer-btn {
+      background:#dc2626;color:#fff;border:none;
+      border-radius:100px;padding:14px 40px;
+      font-size:15px;font-weight:800;
+      cursor:pointer;transition:all 200ms ease;
+      box-shadow:0 4px 16px rgba(220,38,38,0.2);
+    }
+    .gs-answer-btn:hover { background:#b91c1c;transform:translateY(-1px);box-shadow:0 6px 24px rgba(220,38,38,0.3); }
+    .gs-answer-btn:disabled {
+      opacity:0.3;cursor:default;transform:none;
+      box-shadow:none;
+    }
+    /* Form input */
+    .gs-form-input {
+      background:rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.1);
+      border-radius:14px;padding:16px 20px;
+      font-size:16px;color:#fff;outline:none;
+      transition:border-color 200ms ease;font-family:inherit;
+    }
+    .gs-form-input::placeholder { color:rgba(255,255,255,0.25); }
+    .gs-form-input:focus { border-color:rgba(220,38,38,0.5);box-shadow:0 0 12px rgba(220,38,38,0.08); }
+    @media (max-width:700px){
+      .gs-wrap { padding:24px 16px 20px;border-radius:18px; }
+      .gs-opts { grid-template-columns:1fr; }
+      .gs-question { padding:20px 18px; }
+      .gs-question__text { font-size:18px; }
+      .gs-steps { flex-wrap:wrap; }
+      .gs-bottom { flex-wrap:wrap;justify-content:center;gap:16px; }
+    }
+
+    /* ====== Phone Modal ====== */
+    .phone-modal-overlay {
+      position:fixed;inset:0;z-index:9999;
+      background:rgba(0,0,0,0.6);
+      backdrop-filter:blur(4px);
+      display:none;align-items:center;justify-content:center;
+      padding:20px;
+    }
+    .phone-modal-overlay.active { display:flex; }
+    .phone-modal {
+      background:#111118;
+      border-radius:24px;
+      padding:44px 40px;
+      max-width:460px;
+      width:100%;
+      position:relative;
+      text-align:center;
+      overflow:hidden;
+    }
+    .phone-modal::before {
+      content:'';position:absolute;top:-60px;right:-60px;
+      width:200px;height:200px;
+      background:radial-gradient(circle,rgba(220,38,38,0.4),transparent 70%);
+      border-radius:50%;pointer-events:none;
+    }
+    .phone-modal__close {
+      position:absolute;top:16px;right:16px;
+      width:36px;height:36px;border-radius:50%;
+      background:rgba(255,255,255,0.06);border:none;
+      color:rgba(255,255,255,0.4);font-size:20px;
+      cursor:pointer;display:grid;place-items:center;
+      transition:all 200ms ease;z-index:1;
+    }
+    .phone-modal__close:hover { background:rgba(255,255,255,0.12);color:#fff; }
+    .phone-modal__title {
+      font-size:24px;font-weight:900;color:#fff;
+      margin-bottom:8px;position:relative;z-index:1;
+    }
+    .phone-modal__sub {
+      font-size:14px;color:rgba(255,255,255,0.4);
+      margin-bottom:28px;position:relative;z-index:1;
+    }
+    .phone-modal__form {
+      display:flex;flex-direction:column;gap:14px;
+      position:relative;z-index:1;
+    }
+    .phone-modal__input {
+      background:rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.1);
+      border-radius:14px;padding:16px 20px;
+      font-size:16px;color:#fff;outline:none;
+      transition:border-color 200ms ease;font-family:inherit;
+      width:100%;box-sizing:border-box;
+    }
+    .phone-modal__input::placeholder { color:rgba(255,255,255,0.25); }
+    .phone-modal__input:focus { border-color:rgba(220,38,38,0.5); }
+    .phone-modal__btn {
+      background:#dc2626;color:#fff;border:none;
+      border-radius:100px;padding:16px;
+      font-size:16px;font-weight:800;
+      cursor:pointer;transition:all 200ms ease;
+      box-shadow:0 4px 20px rgba(220,38,38,0.3);
+    }
+    .phone-modal__btn:hover { background:#b91c1c;transform:translateY(-1px); }
+    .phone-modal__success {
+      position:relative;z-index:1;
+    }
+    @media (max-width:500px){
+      .phone-modal { padding:32px 20px;border-radius:18px; }
+    }
+
+    .faq-item {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      margin-bottom: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.02);
+      transition: var(--transition);
+    }
+    .faq-item.active {
+      border-color: rgba(217,31,38,0.3);
+      box-shadow: 0 16px 30px rgba(217,31,38,0.08);
+    }
+    .faq-question {
+      width: 100%;
+      text-align: left;
+      padding: 24px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .faq-answer {
+      display: none;
+      padding: 0 24px 24px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .faq-item.active .faq-answer { display: block; }
+    
+    .video-mock {
+      background: var(--bg); height: 160px; border-radius: 16px; display:grid; place-items:center;
+      position:relative; margin-bottom:16px; border: 1px solid var(--line);
+    }
+    .video-play {
+      width: 50px; height: 50px; border-radius: 50%; background: #ffffff; display:grid; place-items:center;
+      color: var(--red); box-shadow: var(--shadow);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. HEADER -->
+  <header class="header">
+    <div class="header__topline">
+      <div class="container topline-inner">
+        <div>Работаем по Витебску и области</div>
+        <div class="topline-contact">
+          <span>Звоните, работаем с 8:00 - 21:00</span>
+        </div>
+      </div>
+    </div>
+    <div class="container header__inner">
+      <div class="header__left">
+        <a href="#" class="header__logo">
+          <img src="assets/img/brusbox-logo.png" alt="Brusbox Logo">
+        </a>
+      </div>
+      <nav class="header__nav">
+        <div class="nav-item has-dropdown">
+          <a href="#products" class="nav-link">Окна <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg" class="nav-arrow"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+          <div class="mega-menu">
+            <div class="mega-menu__col">
+              <div class="mega-menu__title">По назначению</div>
+              <a href="#products" class="mega-menu__link">Окна в квартиру</a>
+              <a href="#products" class="mega-menu__link">Окна в частный дом</a>
+              <a href="#products" class="mega-menu__link">Окна на террасу и веранду, в беседку</a>
+            </div>
+            <div class="mega-menu__col">
+              <div class="mega-menu__title">По виду</div>
+              <a href="#products" class="mega-menu__link">Одностворчатые</a>
+              <a href="#products" class="mega-menu__link">Двустворчатые</a>
+              <a href="#products" class="mega-menu__link">Трехстворчатые</a>
+            </div>
+            <div class="mega-menu__col">
+              <div class="mega-menu__title">По задаче</div>
+              <a href="#products" class="mega-menu__link">Энергосберегающие</a>
+              <a href="#products" class="mega-menu__link">Шумозащитные</a>
+              <a href="#products" class="mega-menu__link">Цветные (Ламинированные)</a>
+            </div>
+          </div>
+        </div>
+        <a href="#products" class="nav-link">Балконы</a>
+        <a href="#products" class="nav-link">Двери ПВХ</a>
+        <a href="#why" class="nav-link">О нас</a>
+        <a href="#reviews" class="nav-link">Наши работы</a>
+        <a href="#footer" class="nav-link">Контакты</a>
+      </nav>
+      <div class="header__right">
+        <a href="tel:+375291111111" class="header__phone">+375(29)-111-11-11</a>
+        <button class="btn btn-black" style="padding: 10px 16px; font-size: 13px; white-space: nowrap;">Заказать звонок</button>
+        <div class="header__socials">
+          <a href="#" class="social-icon" style="display: flex; justify-content: center; align-items: center;"><img src="assets/img/viber.png" alt="Viber" style="width: 85%; height: 85%; object-fit: cover; border-radius: 50%;"></a>
+          <a href="#" class="social-icon" style="display: flex; justify-content: center; align-items: center;"><img src="assets/img/tg.png" alt="Telegram" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;"></a>
+        </div>
+        <button class="header__burger" id="burgerBtn" aria-label="Меню">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#products" onclick="closeMobileMenu()">Окна</a>
+    <a href="#products" onclick="closeMobileMenu()">Балконы</a>
+    <a href="#products" onclick="closeMobileMenu()">Двери ПВХ</a>
+    <a href="#why" onclick="closeMobileMenu()">О нас</a>
+    <a href="#reviews" onclick="closeMobileMenu()">Наши работы</a>
+    <a href="#footer" onclick="closeMobileMenu()">Контакты</a>
+    <a href="tel:+375291111111" class="mobile-menu__phone">+375(29)-111-11-11</a>
+    <button class="btn btn-primary mobile-menu__btn" onclick="closeMobileMenu()">Заказать звонок</button>
+  </div>
+
+  <!-- 2. HERO -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-content">
+        <h1 class="title" style="font-size: clamp(40px, 5vw, 64px);">Окна Brusbox<br>от 870 BYN</h1>
+        <p class="hero__subtitle" style="font-size:20px; margin-bottom:8px;">от <span style="color:var(--red); font-weight:800;">35 руб/мес</span> в рассрочку 0% до 24 месяцев</p>
+
+        <!-- Mobile-only hero image -->
+        <div class="hero-img-mobile">
+          <img src="assets/img/окно для первого экрана.png" alt="Окно Brusbox">
+        </div>
+
+        <!-- Melting discount -->
+        <div class="hero-melt" id="heroMelt">
+          <div class="hero-melt__glow"></div>
+          <div class="hero-melt__top">
+            <span class="hero-melt__badge">LIVE</span>
+            <span class="hero-melt__label">Ваша скидка тает прямо сейчас</span>
+          </div>
+          <div class="hero-melt__price">
+            <span class="hero-melt__minus">-</span>
+            <span class="hero-melt__amount" id="meltAmount">500</span>
+            <span class="hero-melt__cur">BYN</span>
+          </div>
+          <div class="hero-melt__track">
+            <div class="hero-melt__fill" id="meltBar"></div>
+          </div>
+          <div style="text-align:right; margin-top:6px;">
+            <span id="meltZero" style="font-size:10px; color:rgba(255,255,255,0.15); cursor:pointer; user-select:none;" onclick="window.meltForceZero&&window.meltForceZero();">zero</span>
+            <span style="color:rgba(255,255,255,0.08); font-size:10px; margin:0 4px;">|</span>
+            <span id="meltReset" style="font-size:10px; color:rgba(255,255,255,0.15); cursor:pointer; user-select:none;" onclick="sessionStorage.removeItem('meltStart');sessionStorage.removeItem('wheelUsed');location.reload();">reset</span>
+          </div>
+        </div>
+
+        <div class="hero-buttons">
+          <button class="btn btn-primary" style="padding: 22px 60px; font-size: 18px; width: 100%; max-width: 400px;">Забронировать скидку</button>
+        </div>
+
+        <div class="hero__stats">
+          <div class="hero-stat"><b>5000+</b><span>установленных окон</span></div>
+          <div class="hero-stat"><b>1 день</b><span>установка под ключ</span></div>
+          <div class="hero-stat"><b>22 года</b><span>производим окна</span></div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <img src="assets/img/окно для первого экрана.png" alt="Пластиковое окно">
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. PROSLOIKA (Videos) -->
+  <section class="section section-rounded" style="background:var(--bg);">
+    <div class="container">
+      <div style="text-align: center; margin-bottom: 40px;">
+        <div class="kicker-center">Контроль на каждом этапе</div>
+        <h2 class="title" style="margin-top: 10px;">Покажем, а не расскажем</h2>
+      </div>
+      <div class="features-grid" style="gap: 20px;">
+        <div class="feature-card" style="padding: 16px; cursor:pointer;" onclick="openVideoModal('assets/img/Производство профиля.png', 'Из чего сделан профиль')">
+          <div class="video-mock" style="background-image: url('assets/img/Производство профиля.png'); background-size: 110%; background-position: center;"><div class="video-play">▶</div></div>
+          <b style="font-size:16px;">Из чего сделан профиль</b>
+        </div>
+        <div class="feature-card" style="padding: 16px; cursor:pointer;" onclick="openVideoModal('assets/img/Производство окон.png', 'Как собирают ваше окно')">
+          <div class="video-mock" style="background-image: url('assets/img/Производство окон.png'); background-size: 110%; background-position: center;"><div class="video-play">▶</div></div>
+          <b style="font-size:16px;">Как собирают ваше окно</b>
+        </div>
+        <div class="feature-card" style="padding: 16px; cursor:pointer;" onclick="openVideoModal('assets/img/Профессиональный монтаж.png', 'Монтаж без пыли и мусора')">
+          <div class="video-mock" style="background-image: url('assets/img/Профессиональный монтаж.png'); background-size: 110%; background-position: center;"><div class="video-play">▶</div></div>
+          <b style="font-size:16px;">Монтаж без пыли и мусора</b>
+        </div>
+        <div class="feature-card" style="padding: 16px; cursor:pointer;" onclick="openVideoModal('assets/img/Довольные клиенты.png', 'Что говорят наши клиенты')">
+          <div class="video-mock" style="background-image: url('assets/img/Довольные клиенты.png'); background-size: 110%; background-position: center;"><div class="video-play">▶</div></div>
+          <b style="font-size:16px;">Что говорят наши клиенты</b>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. PRODUCTS -->
+  <section class="section" id="products">
+    <div class="container">
+      <div style="text-align: center; margin-bottom: 10px;">
+        <div class="kicker-center">Что мы предлагаем</div>
+        <h2 class="title">Подберите идеальное решение для вашего дома</h2>
+      </div>
+      <div class="products-grid">
+        <div class="product-card">
+          <div class="product-img light-fade"><img src="assets/img/одностворчатое_пвх_красивое_202604011655.png" alt="Одностворчатое окно"></div>
+          <div class="product-info">
+            <b>Одностворчатое окно</b>
+            <div class="product-desc">Для кухни, ванной, кладовой</div>
+            <div class="product-price">от 35 руб/мес</div>
+            <button class="btn btn-primary" style="width:100%;">Узнать цену</button>
+          </div>
+        </div>
+        <div class="product-card">
+          <div class="product-img light-fade"><img src="assets/img/двухстворчатое_пвх_красивое_202604011656.png" alt="Двухстворчатое окно"></div>
+          <div class="product-info">
+            <b>Двухстворчатое окно</b>
+            <div class="product-desc">Для спальни, гостиной, детской</div>
+            <div class="product-price">от 47 руб/мес</div>
+            <button class="btn btn-primary" style="width:100%;">Узнать цену</button>
+          </div>
+        </div>
+        <div class="product-card">
+          <div class="product-img no-fade"><img src="assets/img/трехстворчатое_пвх_красивое_202604011659.png" alt="Трехстворчатое окно"></div>
+          <div class="product-info">
+            <b>Трехстворчатое окно</b>
+            <div class="product-desc">Для больших проёмов и залов</div>
+            <div class="product-price">от 64 руб/мес</div>
+            <button class="btn btn-primary" style="width:100%;">Узнать цену</button>
+          </div>
+        </div>
+        <div class="product-card">
+          <div class="product-img light-fade"><img src="assets/img/балконный_блок_пвх_202604011701.png" alt="Балконный блок"></div>
+          <div class="product-info">
+            <b>Балконный блок</b>
+            <div class="product-desc">Дверь + окно, выход на балкон</div>
+            <div class="product-price">от 57 руб/мес</div>
+            <button class="btn btn-primary" style="width:100%;">Узнать цену</button>
+          </div>
+        </div>
+        <div class="product-card">
+          <div class="product-img"><img src="assets/img/балкон.png" alt="Окна на балкон"></div>
+          <div class="product-info">
+            <b>Окна на балкон</b>
+            <div class="product-desc">Полное остекление балкона</div>
+            <div class="product-price">от 85 руб/мес</div>
+            <button class="btn btn-primary" style="width:100%;">Узнать цену</button>
+          </div>
+        </div>
+        <div class="product-card">
+          <div class="product-img"><img src="assets/img/белая_пвх_дверь,_202604011732.png" alt="Двери ПВХ"></div>
+          <div class="product-info">
+            <b>Двери ПВХ</b>
+            <div class="product-desc">Входные и межкомнатные</div>
+            <div class="product-price">от 79 руб/мес</div>
+            <button class="btn btn-primary" style="width:100%;">Узнать цену</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. INSTALLMENT -->
+  <section class="section" style="background:var(--bg);">
+    <div class="container">
+      <div style="text-align: center; margin-bottom: 40px;">
+        <div class="kicker-center">Платите как удобно</div>
+        <h2 class="title">Узнайте ваш ежемесячный платёж</h2>
+        <p style="color:var(--muted); font-size:18px; max-width:560px; margin:0 auto;">Рассчитайте удобный платёж без переплат — оформление за 10 минут, не выходя из дома.</p>
+      </div>
+      <div class="installment-wrap" style="max-width:900px; margin:0 auto;">
+        <div style="display:flex; flex-direction:column; gap:40px; max-width: 800px; margin: 0 auto;">
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
+              <b style="font-size:20px;">Сумма вашего заказа</b>
+              <b style="font-size:20px; color:var(--red);" id="amountVal">1500 BYN</b>
+            </div>
+            <input type="range" id="amountRange" min="500" max="5000" step="50" value="1500" style="width:100%;">
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
+              <b style="font-size:20px;">Срок рассрочки</b>
+              <b style="font-size:20px; color:var(--red);" id="termVal">12 мес.</b>
+            </div>
+            <input type="range" id="termRange" min="0" max="5" step="1" value="3" style="width:100%;">
+            <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:13px; color:var(--muted); font-weight:600;">
+              <span>2 мес</span><span>3 мес</span><span>4 мес</span><span>12 мес</span><span>18 мес</span><span>24 мес</span>
+            </div>
+          </div>
+          <div style="background:var(--bg); padding:30px; border-radius:var(--radius-lg); text-align:center;">
+            <div style="font-size:18px; color:var(--muted); margin-bottom:10px;">Ежемесячный платеж</div>
+            <div id="resultPayment" style="font-size:42px; font-weight:800; color:var(--red); margin-bottom:6px;">125 руб/мес</div>
+            <div id="paymentNote" style="font-size:15px; color:var(--muted); font-weight:600;"></div>
+            <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.2); border-radius:100px; padding:8px 20px; margin-top:16px;">
+              <span style="color:#16a34a; font-size:18px;">✓</span>
+              <span style="font-weight:800; color:#15803d; font-size:15px;">Переплата 0 BYN</span>
+            </div>
+            <div style="display:flex; gap:20px; justify-content:center; flex-wrap:wrap; margin-top:20px; color:var(--muted); font-size:14px;">
+                <span>✔ Банки-партнеры (более 5)</span>
+                <span>✔ Фиксированная сумма в BYN</span>
+                <span>✔ Оформление за 10 мин дома</span>
+            </div>
+            <button class="btn btn-primary" style="margin-top:30px;">Зафиксировать условия рассрочки</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. CALCULATOR -->
+  <section class="section">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:40px;">
+        <div class="kicker-center">Узнайте цену за 30 секунд</div>
+        <h2 class="title">Рассчитайте стоимость за 30 секунд</h2>
+        <p style="color:var(--muted); font-size:18px; max-width:560px; margin:0 auto;">Ответьте на пару вопросов — и мы подготовим расчёт с точной ценой и условиями рассрочки.</p>
+      </div>
+      <div class="calc-c">
+        <div class="calc-c__left" id="calcCapp"></div>
+        <div class="calc-c__right" id="calcCpreview">
+          <div class="calc-c__preview-label">Ваши ответы</div>
+          <div class="calc-c__preview-empty">Выберите вариант слева</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. WHY BRUSBOX (DARK) -->
+  <section class="section-dark" id="why" style="position:relative;overflow:hidden;">
+    <!-- Waves BG -->
+    <div id="wavesWrap" style="position:absolute;inset:0;z-index:0;pointer-events:none;">
+      <canvas id="wavesCanvas" style="display:block;width:100%;height:100%;"></canvas>
+    </div>
+    <div class="container" style="position:relative;z-index:1;">
+
+      <!-- Кикер с чёрточками (как в остальных блоках, но белый) -->
+      <div style="display:flex; align-items:center; justify-content:center; gap:16px; color:var(--red); font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:20px;">
+        <span style="display:block; width:30px; height:1px; background:var(--red);"></span>
+        Преимущества окон Brusbox
+        <span style="display:block; width:30px; height:1px; background:var(--red);"></span>
+      </div>
+
+      <!-- Заголовок -->
+      <h2 class="title" style="text-align:center; margin-bottom:16px;">Что вы получаете с&nbsp;окнами&nbsp;Brusbox</h2>
+      <p style="font-size:18px; color:var(--muted-dark); line-height:1.65; max-width:580px; margin:0 auto; text-align:center;">Каждое окно — это результат 22 лет опыта, собственного производства профиля и строгого контроля на каждом этапе.</p>
+
+      <!-- 4 преимущества с цифрами -->
+      <div class="why-features" style="margin-top:56px;">
+
+        <div style="border-left:3px solid var(--red); padding-left:20px;">
+          <div style="font-size:36px; font-weight:800; color:var(--red); line-height:1; margin-bottom:6px;">до −40°C</div>
+          <div style="font-size:20px; font-weight:800; color:#fff; margin-bottom:8px;">Тепло в любой мороз</div>
+          <p style="font-size:14px; color:var(--muted-dark); line-height:1.55; margin:0;">Дома тепло, даже когда за окном минус сорок. Никаких сквозняков, холодных стёкол и конденсата на раме.</p>
+        </div>
+
+        <div style="border-left:3px solid var(--red); padding-left:20px;">
+          <div style="font-size:36px; font-weight:800; color:var(--red); line-height:1; margin-bottom:6px;">до 45 дБ</div>
+          <div style="font-size:20px; font-weight:800; color:#fff; margin-bottom:8px;">Шумоизоляция</div>
+          <p style="font-size:14px; color:var(--muted-dark); line-height:1.55; margin:0;">Снижают уличный шум до уровня тихой библиотеки. Двухкамерный стеклопакет + герметичный профиль.</p>
+        </div>
+
+        <div style="border-left:3px solid var(--red); padding-left:20px;">
+          <div style="font-size:36px; font-weight:800; color:var(--red); line-height:1; margin-bottom:6px;">100+</div>
+          <div style="font-size:20px; font-weight:800; color:#fff; margin-bottom:8px;">Цветов ламинации</div>
+          <p style="font-size:14px; color:var(--muted-dark); line-height:1.55; margin:0;">Окна под любой фасад и интерьер — от белого до дерева и антрацита. Цвет не выгорает 20+ лет.</p>
+        </div>
+
+        <div style="border-left:3px solid var(--red); padding-left:20px;">
+          <div style="font-size:36px; font-weight:800; color:var(--red); line-height:1; margin-bottom:6px;">60+ лет</div>
+          <div style="font-size:20px; font-weight:800; color:#fff; margin-bottom:8px;">Срок службы</div>
+          <p style="font-size:14px; color:var(--muted-dark); line-height:1.55; margin:0;">Профиль не желтеет, не деформируется и не трескается. Легко моется — достаточно влажной тряпки.</p>
+        </div>
+
+      </div>
+
+      <!-- Строка фактов -->
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:20px; margin-top:56px; padding-top:40px; border-top:1px solid rgba(255,255,255,0.08);">
+        <div style="text-align:center;">
+          <div style="font-size:28px; font-weight:800; color:#fff; line-height:1;">5 000+</div>
+          <div style="font-size:13px; color:var(--muted-dark); margin-top:6px;">окон установлено</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:28px; font-weight:800; color:#fff; line-height:1;">22 года</div>
+          <div style="font-size:13px; color:var(--muted-dark); margin-top:6px;">на рынке Беларуси</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:28px; font-weight:800; color:#fff; line-height:1;">1 день</div>
+          <div style="font-size:13px; color:var(--muted-dark); margin-top:6px;">установка под ключ</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:28px; font-weight:800; color:#fff; line-height:1;">0%</div>
+          <div style="font-size:13px; color:var(--muted-dark); margin-top:6px;">рассрочка без переплат</div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div style="margin-top:48px; text-align:center;">
+        <button class="btn btn-primary" style="padding:20px 40px; font-size:16px;">Подобрать окна BRUSBOX</button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 8. JOURNEY -->
+  <section class="section">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:40px;">
+        <div class="kicker-center">Всего 4 шага до новых окон</div>
+        <h2 class="title">От мечты до нового окна — всего 4 шага</h2>
+        <p style="color:var(--muted); font-size:18px;">Установка окон Brusbox — это просто, прозрачно и без лишних хлопот.</p>
+      </div>
+
+      <div class="journey-timeline" id="journeyTimeline">
+        <div class="journey-line">
+          <div class="journey-line__fill" id="journeyLineFill"></div>
+        </div>
+        <div class="journey-step j-open" data-step="1">
+          <div class="journey-num">1</div>
+          <b style="font-size:18px; margin-bottom:10px; display:block;">Звонок</b>
+          <p style="font-size:14px; color:var(--muted);">Расскажем всё, что интересует. Точная цена — только после замера.</p>
+        </div>
+        <div class="journey-step j-locked" data-step="2">
+          <div class="journey-num">2</div>
+          <b style="font-size:18px; margin-bottom:10px; display:block;">Бесплатный замер</b>
+          <p style="font-size:14px; color:var(--muted);">Приедем, замерим с точностью до миллиметра и проконсультируем по всем нюансам — от профиля до монтажа.</p>
+        </div>
+        <div class="journey-step j-locked" data-step="3">
+          <div class="journey-num">3</div>
+          <b style="font-size:18px; margin-bottom:10px; display:block;">Сборка заказа</b>
+          <p style="font-size:14px; color:var(--muted);">Производство <span style="color:var(--red);">·</span> Комплектация <span style="color:var(--red);">·</span> Доставка</p>
+        </div>
+        <div class="journey-step j-locked" data-step="4">
+          <div class="journey-num">4</div>
+          <b style="font-size:18px; margin-bottom:10px; display:block;">Чистый монтаж</b>
+          <p style="font-size:14px; color:var(--muted);">Установка за 1 день. Выносим за собой весь мусор.</p>
+        </div>
+      </div>
+
+      <div class="journey-cta" id="journeyCta" style="opacity:0; transform:translateY(20px); transition:all 600ms ease; pointer-events:none;">
+        <div>
+          <b style="font-size:32px; display:block; margin-bottom:10px;">Готовы начать?</b>
+          <p style="color:var(--muted-dark); font-size:16px;">Оставьте номер — перезвоним за 5 минут, ответим на вопросы.</p>
+        </div>
+        <form id="journeyForm" style="display:flex; gap:12px; align-items:center;">
+          <input class="input" type="tel" placeholder="+375 (__) ___-__-__" required style="background:var(--bg-dark); border-color:rgba(255,255,255,0.1); color:#fff; width:220px;">
+          <button type="submit" class="btn btn-primary" style="white-space:nowrap;">Оставить номер</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. REVIEWS -->
+  <section class="section" style="background:var(--bg);" id="reviews">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:50px;">
+        <div class="kicker-center">Реальные объекты в Витебске</div>
+        <h2 class="title">Наши работы</h2>
+        <p style="color:var(--muted); font-size:18px; max-width:520px; margin:0 auto;">Реальные объекты наших клиентов в Витебске и области</p>
+      </div>
+
+      <!-- Main featured card -->
+      <div class="work-featured">
+        <div class="work-featured__img">
+          <img src="https://placehold.co/800x500/1a1a1f/333?text=Балкон+·+Витебск" alt="Балкон Витебск">
+          <div class="work-featured__overlay">
+            <span class="work-tag">Балкон</span>
+          </div>
+        </div>
+        <div class="work-featured__body">
+          <div style="font-size:13px; font-weight:700; color:var(--red); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">г. Витебск · ул. 1-ая Пролетарская</div>
+          <b style="font-size:24px; display:block; margin-bottom:12px;">Остекление балкона под ключ</b>
+          <p style="color:var(--muted); font-size:15px; line-height:1.6; margin-bottom:20px;">«Пригласила замерщиков, очень вежливо всё объяснили. Поставили балкон аккуратно и в срок. Мы довольны, рекомендуем!»</p>
+          <div style="display:flex; gap:24px; font-size:14px; color:var(--muted);">
+            <span><b style="color:var(--text);">Профиль:</b> Brusbox 70</span>
+            <span><b style="color:var(--text);">Срок:</b> 3 дня</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid of works -->
+      <div class="works-grid">
+        <div class="work-card">
+          <div class="work-card__img">
+            <img src="https://placehold.co/400x300/1a1a1f/333?text=Окна+·+Квартира" alt="Окна квартира">
+            <div class="work-card__overlay"><span class="work-tag">Окна</span></div>
+          </div>
+          <div class="work-card__body">
+            <b>Двухстворчатые окна в квартиру</b>
+            <p>г. Витебск · ул. Московская</p>
+          </div>
+        </div>
+        <div class="work-card">
+          <div class="work-card__img">
+            <img src="https://placehold.co/400x300/1a1a1f/333?text=Балконный+блок" alt="Балконный блок">
+            <div class="work-card__overlay"><span class="work-tag">Балконный блок</span></div>
+          </div>
+          <div class="work-card__body">
+            <b>Балконный блок с откидной створкой</b>
+            <p>г. Витебск · ул. Чкалова</p>
+          </div>
+        </div>
+        <div class="work-card">
+          <div class="work-card__img">
+            <img src="https://placehold.co/400x300/1a1a1f/333?text=Дом+·+Окна" alt="Окна в дом">
+            <div class="work-card__overlay"><span class="work-tag">Частный дом</span></div>
+          </div>
+          <div class="work-card__body">
+            <b>Остекление коттеджа — 12 окон</b>
+            <p>Витебский р-н · д. Тулово</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align:center; margin-top:44px;">
+        <button class="btn btn-primary" style="padding:18px 40px; font-size:16px;">Рассчитать стоимость</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. CERTS -->
+  <section class="section">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:50px;">
+        <div class="kicker-center">Подтверждено документами</div>
+        <h2 class="title">Сертификаты</h2>
+        <p style="color:var(--muted); font-size:18px; max-width:520px; margin:0 auto;">Профиль Brusbox сертифицирован и соответствует всем стандартам качества</p>
+      </div>
+      <div class="certs-grid">
+        <div class="cert-card">
+          <div class="cert-card__img">
+            <img src="https://placehold.co/240x340/ffffff/d91f26?text=Сертификат+1" alt="Сертификат 1">
+          </div>
+          <div class="cert-card__body">Сертификат соответствия</div>
+        </div>
+        <div class="cert-card cert-card--main">
+          <div class="cert-card__img">
+            <img src="https://placehold.co/280x400/ffffff/d91f26?text=Сертификат+Соответствия" alt="Сертификат соответствия">
+          </div>
+          <div class="cert-card__body">Сертификат качества профиля</div>
+        </div>
+        <div class="cert-card">
+          <div class="cert-card__img">
+            <img src="https://placehold.co/240x340/ffffff/d91f26?text=Сертификат+2" alt="Сертификат 2">
+          </div>
+          <div class="cert-card__body">Гигиенический сертификат</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11. FAQ -->
+  <section class="section" style="background:var(--bg);">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:50px;">
+        <div class="kicker-center">Развеем сомнения</div>
+        <h2 class="title">Частые вопросы</h2>
+        <p style="color:var(--muted); font-size:18px; max-width:560px; margin:0 auto;">Собрали ключевые вопросы, чтобы развеять сомнения перед заказом окон</p>
+      </div>
+      <div class="faq-list">
+        <div class="faq-card" data-faq>
+          <button class="faq-card__q" aria-expanded="false">
+            <span class="faq-card__num">01</span>
+            <span class="faq-card__text">Сколько стоит окно и от чего цена?</span>
+            <span class="faq-card__icon"></span>
+          </button>
+          <div class="faq-card__a">Цена зависит от профиля, стеклопакета, открываний, фурнитуры и сложности монтажа. Точный расчёт даём после замера.</div>
+        </div>
+        <div class="faq-card" data-faq>
+          <button class="faq-card__q" aria-expanded="false">
+            <span class="faq-card__num">02</span>
+            <span class="faq-card__text">Что важнее: профиль или стеклопакет?</span>
+            <span class="faq-card__icon"></span>
+          </button>
+          <div class="faq-card__a">Важны оба элемента: профиль отвечает за прочность конструкции, а стеклопакет — за удержание тепла и подавление шума.</div>
+        </div>
+        <div class="faq-card" data-faq>
+          <button class="faq-card__q" aria-expanded="false">
+            <span class="faq-card__num">03</span>
+            <span class="faq-card__text">Будет ли дома теплее?</span>
+            <span class="faq-card__icon"></span>
+          </button>
+          <div class="faq-card__a">Конечно! Наши окна 100% герметичны. Главное подобрать хороший стеклопакет и профессионально его установить.</div>
+        </div>
+        <div class="faq-card" data-faq>
+          <button class="faq-card__q" aria-expanded="false">
+            <span class="faq-card__num">04</span>
+            <span class="faq-card__text">Можно ли ставить окна зимой?</span>
+            <span class="faq-card__icon"></span>
+          </button>
+          <div class="faq-card__a">Да, мы используем зимнюю пену и теплые экраны. Ваша квартира не успеет промёрзнуть во время установки окна.</div>
+        </div>
+        <div class="faq-card" data-faq>
+          <button class="faq-card__q" aria-expanded="false">
+            <span class="faq-card__num">05</span>
+            <span class="faq-card__text">Станет ли тише с новыми окнами?</span>
+            <span class="faq-card__icon"></span>
+          </button>
+          <div class="faq-card__a">Да, качественный пластиковый профиль и двухкамерный стеклопакет снижают уровень шума с улицы в несколько раз.</div>
+        </div>
+        <div class="faq-card" data-faq>
+          <button class="faq-card__q" aria-expanded="false">
+            <span class="faq-card__num">06</span>
+            <span class="faq-card__text">Почему окна могут запотевать?</span>
+            <span class="faq-card__icon"></span>
+          </button>
+          <div class="faq-card__a">Запотевание чаще всего связано с высокой влажностью в помещении и плохой вентиляцией. Регулярное проветривание и правильный монтаж решают эту проблему.</div>
+        </div>
+        <div class="faq-card" data-faq>
+          <button class="faq-card__q" aria-expanded="false">
+            <span class="faq-card__num">07</span>
+            <span class="faq-card__text">Что входит в хороший монтаж?</span>
+            <span class="faq-card__icon"></span>
+          </button>
+          <div class="faq-card__a">Хороший монтаж — это 80% успеха. Он включает правильную подготовку проёма, использование надежных изоляционных лент, выравнивание и крепление конструкции. Некачественный монтаж сведёт на нет преимущества самого окна.</div>
+        </div>
+        <div class="faq-card" data-faq>
+          <button class="faq-card__q" aria-expanded="false">
+            <span class="faq-card__num">08</span>
+            <span class="faq-card__text">Какая гарантия и как долго служат окна?</span>
+            <span class="faq-card__icon"></span>
+          </button>
+          <div class="faq-card__a">При правильной установке современные окна служат 40–50 лет. На профиль и монтаж мы даём официальную гарантию.</div>
+        </div>
+      </div>
+      <div style="text-align:center; margin-top:40px;">
+        <button class="btn btn-primary">Получить консультацию</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12. FOOTER -->
+  <footer class="footer">
+    <!-- Map -->
+    <div class="footer-map">
+      <iframe src="https://yandex.ru/map-widget/v1/?ll=30.223216%2C55.178501&z=16&pt=30.223216%2C55.178501%2Cpm2rdm&lang=ru_RU" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <div class="container">
+      <div class="footer-grid">
+        <!-- Col 1: Logo + about -->
+        <div class="footer-col">
+          <div class="footer-logo">BRUSBOX</div>
+          <p class="footer-about">Производство, доставка и профессиональный монтаж пластиковых окон Brusbox в Витебске и Витебской области.</p>
+          <div class="footer-socials">
+            <a href="#" class="footer-social" aria-label="Instagram">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+            </a>
+            <a href="#" class="footer-social" aria-label="Telegram">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.53 8.15l-1.8 8.47c-.13.6-.5.75-.99.47l-2.74-2.02-1.32 1.27c-.15.15-.27.27-.55.27l.2-2.78 5.07-4.58c.22-.2-.05-.3-.34-.12l-6.27 3.95-2.7-.84c-.59-.18-.6-.59.12-.87l10.55-4.07c.49-.18.92.12.76.87z"/></svg>
+            </a>
+            <a href="#" class="footer-social" aria-label="Viber">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.63 13.51c-.25.7-1.23 1.3-1.97 1.47-.51.12-1.17.21-3.41-.73-2.86-1.21-4.69-4.13-4.83-4.32-.14-.19-1.15-1.53-1.15-2.92 0-1.38.73-2.07.99-2.35.26-.28.56-.35.75-.35.19 0 .37 0 .54.01.17.01.4-.07.63.48.23.56.79 1.94.86 2.08.07.14.12.3.02.48-.09.19-.14.3-.28.46-.14.16-.29.35-.42.47-.14.14-.28.28-.12.56.16.28.73 1.21 1.57 1.96 1.08.96 1.99 1.26 2.27 1.4.28.14.44.12.6-.07.16-.19.7-.81.88-1.09.19-.28.37-.23.63-.14.26.09 1.63.77 1.91.91.28.14.46.21.53.33.07.12.07.67-.18 1.37z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Col 2: Contacts -->
+        <div class="footer-col">
+          <div class="footer-col__title">Контакты</div>
+          <div class="footer-contacts">
+            <a href="tel:+375291234567" class="footer-contact">
+              <span class="footer-contact__icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+              </span>
+              <span>+375 (29) 123-45-67</span>
+            </a>
+            <a href="mailto:info@brusbox-vitebsk.by" class="footer-contact">
+              <span class="footer-contact__icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>
+              </span>
+              <span>info@brusbox-vitebsk.by</span>
+            </a>
+            <div class="footer-contact">
+              <span class="footer-contact__icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </span>
+              <span>г. Витебск, Московский пр-т 31А</span>
+            </div>
+            <div class="footer-contact">
+              <span class="footer-contact__icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              </span>
+              <span>Пн-Пт: 9:00 — 18:00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Col 3: Navigation -->
+        <div class="footer-col">
+          <div class="footer-col__title">Навигация</div>
+          <nav class="footer-nav">
+            <a href="#products" class="footer-nav__link">Продукция</a>
+            <a href="#calc" class="footer-nav__link">Калькулятор</a>
+            <a href="#installment" class="footer-nav__link">Рассрочка</a>
+            <a href="#journey" class="footer-nav__link">Как мы работаем</a>
+            <a href="#works" class="footer-nav__link">Наши работы</a>
+            <a href="#faq" class="footer-nav__link">FAQ</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Bottom bar -->
+      <div class="footer-bottom">
+        <span class="footer-copy">&copy; 2026 ООО «Немецкие ОКНА Бел». УНП 391566241. Все права защищены.</span>
+        <button class="footer-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 15l-6-6-6 6"/></svg>
+          Наверх
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- VIDEO MODAL -->
+  <div class="video-modal" id="videoModal">
+    <div class="video-modal__overlay" onclick="closeVideoModal()"></div>
+    <div class="video-modal__content">
+      <button class="video-modal__close" onclick="closeVideoModal()">✕</button>
+      <div class="video-modal__image" id="videoModalImage"></div>
+      <div class="video-modal__title" id="videoModalTitle"></div>
+      <div class="video-modal__play">▶</div>
+      <p style="color:var(--muted); text-align:center; margin-top:12px;">Видео скоро будет добавлено</p>
+    </div>
+  </div>
+
+  <!-- Floating discount badge -->
+  <div class="float-melt" id="floatMelt">
+    <div class="float-melt__inner">
+      <span class="float-melt__badge">LIVE</span>
+      <div class="float-melt__price">
+        <span class="float-melt__minus">-</span>
+        <span class="float-melt__amount" id="floatAmount">500</span>
+        <span class="float-melt__cur">BYN</span>
+      </div>
+    </div>
+    <button class="float-melt__btn btn btn-primary">Забронировать</button>
+  </div>
+
+  <!-- Phone Modal -->
+  <div class="phone-modal-overlay" id="phoneModal">
+    <div class="phone-modal">
+      <button class="phone-modal__close" onclick="closePhoneModal()">&times;</button>
+      <div id="phoneModalContent">
+        <div class="phone-modal__title">Оставьте номер телефона</div>
+        <div class="phone-modal__sub">Мы перезвоним в течение 5 минут и ответим на все вопросы</div>
+        <form class="phone-modal__form" id="phoneModalForm">
+          <input class="phone-modal__input" type="tel" id="phoneModalInput" placeholder="+375 (__) ___-__-__" required>
+          <button type="submit" class="phone-modal__btn">Перезвоните мне</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wheel of Fortune Modal -->
+  <div class="wheel-overlay" id="wheelModal">
+    <div class="wheel-modal">
+      <button class="wheel-modal__close" onclick="closeWheel()">&times;</button>
+      <div id="wheelContent">
+        <div class="wheel-modal__badge">Второй шанс</div>
+        <div class="wheel-modal__title">Скидка ушла, но у&nbsp;вас есть попытка</div>
+        <div class="wheel-modal__sub">Крутите колесо — выигрыш от 100 до 300 BYN</div>
+        <div class="wheel-container">
+          <div class="wheel-pointer"></div>
+          <canvas id="wheelCanvas" width="260" height="260"></canvas>
+        </div>
+        <button class="wheel-spin-btn" id="wheelSpinBtn" onclick="spinWheel()">Крутить колесо</button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .wheel-overlay {
+      position:fixed;inset:0;z-index:10000;
+      background:rgba(0,0,0,0.45);
+      backdrop-filter:blur(8px);
+      -webkit-backdrop-filter:blur(8px);
+      display:none;align-items:center;justify-content:center;
+      padding:20px;
+    }
+    .wheel-overlay.active { display:flex; }
+    .wheel-modal {
+      background:var(--card-solid, #fff);
+      border-radius:var(--radius-xl, 30px);
+      padding:40px 32px;
+      max-width:400px;
+      width:100%;
+      position:relative;
+      text-align:center;
+      border:1px solid var(--line, rgba(15,23,42,0.08));
+      box-shadow:0 30px 80px rgba(0,0,0,0.18);
+      animation:wheel-appear 500ms cubic-bezier(.2,.8,.2,1);
+    }
+    @keyframes wheel-appear {
+      from { opacity:0; transform:scale(0.92) translateY(30px); }
+      to { opacity:1; transform:scale(1) translateY(0); }
+    }
+    .wheel-modal__close {
+      position:absolute;top:16px;right:16px;
+      width:36px;height:36px;border-radius:50%;
+      background:var(--bg, #f5f5f7);border:1px solid var(--line, rgba(15,23,42,0.08));
+      color:var(--muted, #6f6f79);font-size:18px;
+      cursor:pointer;display:grid;place-items:center;
+      transition:all 200ms ease;z-index:1;
+    }
+    .wheel-modal__close:hover { background:var(--red, #d91f26);color:#fff;border-color:var(--red); }
+    .wheel-modal__badge {
+      display:inline-flex;align-items:center;gap:6px;
+      background:rgba(217,31,38,0.08);color:var(--red, #d91f26);
+      font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;
+      padding:6px 16px;border-radius:100px;margin-bottom:16px;
+    }
+    .wheel-modal__badge::before {
+      content:'';width:6px;height:6px;border-radius:50%;
+      background:var(--red);animation:badge-dot 1.5s infinite;
+    }
+    .wheel-modal__title {
+      font-size:28px;font-weight:800;color:var(--text, #1f1f24);
+      margin-bottom:8px;letter-spacing:-0.02em;
+    }
+    .wheel-modal__sub {
+      font-size:14px;color:var(--muted, #6f6f79);margin-bottom:28px;line-height:1.6;
+    }
+    .wheel-container {
+      position:relative;
+      width:260px;height:260px;
+      margin:0 auto 28px;
+    }
+    .wheel-pointer {
+      position:absolute;
+      top:-6px;left:50%;transform:translateX(-50%);
+      z-index:2;line-height:1;
+      width:0;height:0;
+      border-left:12px solid transparent;
+      border-right:12px solid transparent;
+      border-top:18px solid var(--red, #d91f26);
+      filter:drop-shadow(0 2px 4px rgba(217,31,38,0.3));
+      font-size:0;
+    }
+    #wheelCanvas {
+      border-radius:50%;
+      box-shadow:0 0 0 4px var(--line, rgba(15,23,42,0.08)), 0 8px 30px rgba(0,0,0,0.1);
+    }
+    .wheel-spin-btn {
+      background:linear-gradient(135deg, var(--red, #d91f26), #f23a42);
+      color:#fff;border:none;
+      border-radius:18px;padding:18px 48px;
+      font-size:16px;font-weight:800;
+      cursor:pointer;font-family:inherit;
+      box-shadow:0 16px 30px rgba(217,31,38,0.22);
+      transition:all 250ms ease;
+    }
+    .wheel-spin-btn:hover { transform:translateY(-2px); box-shadow:0 20px 36px rgba(217,31,38,0.28); }
+    .wheel-spin-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+    .wheel-result { margin-top:16px; }
+    .wheel-result__amount {
+      font-size:52px;font-weight:800;color:var(--red, #d91f26);
+      margin-bottom:2px;line-height:1;letter-spacing:-0.03em;
+    }
+    .wheel-result__label {
+      font-size:14px;color:var(--muted, #6f6f79);margin-bottom:16px;
+    }
+    .wheel-form { display:flex;flex-direction:column;gap:12px;margin-top:16px; }
+    .wheel-form input {
+      background:var(--bg, #f5f5f7);
+      border:1px solid var(--line, rgba(15,23,42,0.08));
+      border-radius:18px;padding:18px 20px;
+      font-size:16px;color:var(--text, #1f1f24);outline:none;
+      font-family:inherit;transition:border-color 200ms, box-shadow 200ms;
+    }
+    .wheel-form input::placeholder { color:var(--muted, #6f6f79); }
+    .wheel-form input:focus { border-color:var(--red); box-shadow:0 0 0 4px rgba(217,31,38,0.1); }
+    .wheel-form button {
+      background:linear-gradient(135deg, var(--red, #d91f26), #f23a42);
+      color:#fff;border:none;
+      border-radius:18px;padding:18px;
+      font-size:15px;font-weight:800;
+      cursor:pointer;font-family:inherit;
+      box-shadow:0 16px 30px rgba(217,31,38,0.22);
+      transition:all 250ms ease;
+    }
+    .wheel-form button:hover { transform:translateY(-2px); box-shadow:0 20px 36px rgba(217,31,38,0.28); }
+    @media (max-width:480px){
+      .wheel-modal { padding:32px 20px;border-radius:24px; }
+      .wheel-container { width:220px; height:220px; }
+      #wheelCanvas { width:220px; height:220px; }
+      .wheel-modal__title { font-size:24px; }
+      .wheel-result__amount { font-size:44px; }
+    }
+  </style>
+
+  <script src="assets/js/main.js"></script>
+  <script>
+    function openVideoModal(imgSrc, title) {
+      const modal = document.getElementById('videoModal');
+      const modalImg = document.getElementById('videoModalImage');
+      const modalTitle = document.getElementById('videoModalTitle');
+      modalImg.style.backgroundImage = "url('" + imgSrc + "')";
+      modalTitle.textContent = title;
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeVideoModal() {
+      const modal = document.getElementById('videoModal');
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeVideoModal();
+    });
+  </script>
+
+
+<script>
+(function(){
+  /* ── Simplex 2D noise ── */
+  function makeNoise2D(){
+    var F2=0.5*(Math.sqrt(3)-1),G2=(3-Math.sqrt(3))/6;
+    var p=new Uint8Array(256);
+    for(var i=0;i<256;i++) p[i]=i;
+    for(var i=255;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=p[i];p[i]=p[j];p[j]=t;}
+    var perm=new Uint8Array(512),pm12=new Uint8Array(512);
+    for(var i=0;i<512;i++){perm[i]=p[i&255];pm12[i]=perm[i]%12;}
+    var g3=[[1,1],[-1,1],[1,-1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,1],[1,-1],[-1,-1]];
+    return function(xin,yin){
+      var s=(xin+yin)*F2,i=Math.floor(xin+s),j=Math.floor(yin+s);
+      var tt=(i+j)*G2,x0=xin-(i-tt),y0=yin-(j-tt);
+      var i1=x0>y0?1:0,j1=x0>y0?0:1;
+      var x1=x0-i1+G2,y1=y0-j1+G2,x2=x0-1+2*G2,y2=y0-1+2*G2;
+      i&=255;j&=255;
+      var gi0=pm12[i+perm[j]],gi1=pm12[i+i1+perm[j+j1]],gi2=pm12[i+1+perm[j+1]];
+      var n0=0,n1=0,n2=0;
+      var t0=0.5-x0*x0-y0*y0;if(t0>=0){t0*=t0;n0=t0*t0*(g3[gi0][0]*x0+g3[gi0][1]*y0);}
+      var t1=0.5-x1*x1-y1*y1;if(t1>=0){t1*=t1;n1=t1*t1*(g3[gi1][0]*x1+g3[gi1][1]*y1);}
+      var t2=0.5-x2*x2-y2*y2;if(t2>=0){t2*=t2;n2=t2*t2*(g3[gi2][0]*x2+g3[gi2][1]*y2);}
+      return 70*(n0+n1+n2);
+    };
+  }
+
+  /* ── Setup ── */
+  var wrap=document.getElementById('wavesWrap');
+  var canvas=document.getElementById('wavesCanvas');
+  if(!wrap||!canvas) return;
+  var ctx=canvas.getContext('2d');
+
+  var noise=makeNoise2D();
+  var lines=[];
+  var W=0,H=0,dpr=Math.min(window.devicePixelRatio||1,2);
+  var raf=null,visible=false;
+  var mx=-100,my=-100,msx=-100,msy=-100,mlx=0,mly=0,mvs=0,ma=0,mSet=false;
+
+  function setSize(){
+    var r=wrap.getBoundingClientRect();
+    W=r.width; H=r.height;
+    canvas.width=W*dpr;
+    canvas.height=H*dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+
+  function setLines(){
+    lines=[];
+    var xGap=12, yGap=10;
+    var totalL=Math.ceil((W+100)/xGap);
+    var totalP=Math.ceil((H+20)/yGap);
+    var xS=(W-xGap*totalL)/2;
+    var yS=(H-yGap*totalP)/2;
+    for(var i=0;i<totalL;i++){
+      var pts=[];
+      for(var j=0;j<totalP;j++){
+        pts.push({x:xS+xGap*i,y:yS+yGap*j,wx:0,wy:0,cx:0,cy:0,cvx:0,cvy:0});
+      }
+      lines.push(pts);
+    }
+  }
+
+  var resizeTimer;
+  function onResize(){clearTimeout(resizeTimer);resizeTimer=setTimeout(function(){dpr=Math.min(window.devicePixelRatio||1,2);setSize();setLines();},200);}
+
+  function onMouse(e){
+    var r=wrap.getBoundingClientRect();
+    mx=e.clientX-r.left; my=e.clientY-r.top;
+    if(!mSet){msx=mx;msy=my;mlx=mx;mly=my;mSet=true;}
+  }
+
+  function tick(time){
+    if(!visible){raf=requestAnimationFrame(tick);return;}
+
+    msx+=(mx-msx)*0.1; msy+=(my-msy)*0.1;
+    var dx=mx-mlx,dy=my-mly,d=Math.sqrt(dx*dx+dy*dy);
+    mvs+=(d-mvs)*0.1; if(mvs>100)mvs=100;
+    mlx=mx; mly=my; ma=Math.atan2(dy,dx);
+
+    var cosA=Math.cos(ma),sinA=Math.sin(ma);
+    var t008=time*0.008,t003=time*0.003;
+
+    ctx.clearRect(0,0,W,H);
+    ctx.strokeStyle='rgba(255,255,255,0.055)';
+    ctx.lineWidth=1;
+
+    for(var i=0;i<lines.length;i++){
+      var pts=lines[i], len=pts.length;
+      ctx.beginPath();
+      for(var j=0;j<len;j++){
+        var p=pts[j];
+        var m=noise((p.x+t008)*0.003,(p.y+t003)*0.002)*8;
+        p.wx=Math.cos(m)*12; p.wy=Math.sin(m)*6;
+        var ddx=p.x-msx,ddy=p.y-msy,dd=Math.sqrt(ddx*ddx+ddy*ddy);
+        var l=175>mvs?175:mvs;
+        if(dd<l){
+          var s=1-dd/l,f=Math.cos(dd*0.001)*s;
+          p.cvx+=cosA*f*l*mvs*0.00035;
+          p.cvy+=sinA*f*l*mvs*0.00035;
+        }
+        p.cvx-=p.cx*0.01; p.cvy-=p.cy*0.01;
+        p.cvx*=0.95; p.cvy*=0.95;
+        p.cx+=p.cvx; p.cy+=p.cvy;
+        if(p.cx>50)p.cx=50;else if(p.cx<-50)p.cx=-50;
+        if(p.cy>50)p.cy=50;else if(p.cy<-50)p.cy=-50;
+
+        var px=p.x+p.wx+(j?p.cx:0);
+        var py=p.y+p.wy+(j?p.cy:0);
+        if(j===0) ctx.moveTo(px,py);
+        else ctx.lineTo(px,py);
+      }
+      ctx.stroke();
+    }
+
+    raf=requestAnimationFrame(tick);
+  }
+
+  /* Only animate when section is in viewport */
+  var obs=new IntersectionObserver(function(entries){
+    visible=entries[0].isIntersecting;
+  },{threshold:0});
+  obs.observe(wrap.parentElement);
+
+  setSize(); setLines();
+  window.addEventListener('resize',onResize);
+  window.addEventListener('mousemove',onMouse);
+  raf=requestAnimationFrame(tick);
+})();
+</script>
+
+<!-- Calculator C JS -->
+<script>
+(function(){
+  var Q = {
+    product: { title:'Что вас интересует?', options:[
+      {value:'windows',label:'Окна',sub:'Квартира, дом, дача'},
+      {value:'balconyBlock',label:'Балконный блок',sub:'Дверь + окно на балкон'},
+      {value:'balconyWindows',label:'Окна на балкон',sub:'Остекление балкона'},
+      {value:'doors',label:'Двери ПВХ',sub:'На улицу или внутрь'}
+    ]},
+    branches: {
+      windows:[
+        {key:'place',title:'Куда нужны окна?',options:[{value:'Квартира',label:'В квартиру'},{value:'Дом',label:'В частный дом'},{value:'Дача',label:'На дачу'}]},
+        {key:'type',title:'Какое окно нужно?',options:[{value:'Одностворчатое',label:'Одностворчатое'},{value:'Двухстворчатое',label:'Двухстворчатое'},{value:'Трёхстворчатое',label:'Трёхстворчатое'}]}
+      ],
+      balconyBlock:[{key:'condition',title:'Замена или новый?',options:[{value:'Замена',label:'Замена старого блока'},{value:'Новый',label:'Новый проём'}]}],
+      balconyWindows:[{key:'shape',title:'Форма балкона?',options:[{value:'Прямой',label:'Прямой'},{value:'Угловой',label:'Угловой'},{value:'П-образный',label:'П-образный'}]}],
+      doors:[{key:'place',title:'Куда нужна дверь?',options:[{value:'Улица',label:'На улицу'},{value:'Балкон',label:'На балкон'},{value:'Внутри',label:'Внутри помещения'}]}]
+    }
+  };
+  function branch(p){return p?Q.branches[p]||[]:[]}
+  function total(p){return 1+branch(p).length+1}
+
+  var app=document.getElementById('calcCapp');
+  var preview=document.getElementById('calcCpreview');
+  if(!app||!preview)return;
+  var s={product:null,si:0,answers:{},labels:{},phone:'',done:false};
+  var keyNames={place:'Место',type:'Тип окна',condition:'Вариант',shape:'Форма балкона'};
+
+  function updatePreview(){
+    var wrap=document.querySelector('.calc-c');
+    if(!s.product){
+      if(wrap) wrap.classList.remove('has-preview');
+      return;
+    }
+    if(wrap) wrap.classList.add('has-preview');
+    var h='<div class="calc-c__preview-label">Ваши ответы</div>';
+    h+='<div class="calc-c__preview-answers">';
+    h+='<div class="calc-c__preview-item"><span>Продукт</span><span>'+(s.labels.product||'')+'</span></div>';
+    Object.keys(s.answers).forEach(function(k){
+      h+='<div class="calc-c__preview-item"><span>'+(keyNames[k]||k)+'</span><span>'+s.answers[k]+'</span></div>';
+    });
+    h+='</div>';
+    if(s.done){
+      h+='<div style="text-align:center;margin-top:20px;"><div style="width:48px;height:48px;border-radius:50%;background:#dc2626;color:#fff;display:grid;place-items:center;margin:0 auto 12px;font-size:22px;">&#10003;</div><div style="font-size:16px;font-weight:700;color:#fff;">Принято!</div><div style="font-size:13px;color:var(--muted-dark);margin-top:4px;">'+s.phone+'</div></div>';
+    }
+    preview.innerHTML=h;
+  }
+
+  function render(){
+    if(s.done){updatePreview();return;}
+    if(!s.product){
+      var h='<div class="calc-c__step-label">Шаг 1 из '+(total(null))+'</div>';
+      h+='<div class="calc-c__question">'+Q.product.title+'</div><div class="calc-c__opts">';
+      Q.product.options.forEach(function(o){
+        h+='<label class="calc-c__opt"><input type="radio" name="calcC" class="calc-c__radio" data-val="'+o.value+'" data-label="'+o.label+'"><span class="calc-c__opt-box"><span class="calc-c__opt-name">'+o.label+'</span><span class="calc-c__opt-desc">'+(o.sub||'')+'</span></span></label>';
+      });
+      h+='</div>';
+      app.innerHTML=h;
+      app.querySelectorAll('.calc-c__radio').forEach(function(r){
+        r.addEventListener('change',function(){
+          s.product=r.getAttribute('data-val');
+          s.labels.product=r.getAttribute('data-label');
+          s.si=0;s.answers={};
+          setTimeout(render,300);
+        });
+      });
+      updatePreview();
+      return;
+    }
+    var steps=branch(s.product);
+    if(s.si<steps.length){
+      var st=steps[s.si];
+      var h='<div class="calc-c__step-label">Шаг '+(s.si+2)+' из '+total(s.product)+'</div>';
+      h+='<div class="calc-c__question">'+st.title+'</div><div class="calc-c__opts">';
+      st.options.forEach(function(o){
+        h+='<label class="calc-c__opt"><input type="radio" name="calcC" class="calc-c__radio" data-val="'+o.value+'"><span class="calc-c__opt-box"><span class="calc-c__opt-name">'+o.label+'</span></span></label>';
+      });
+      h+='</div><button class="calc-c__back" onclick="calcCback()">&larr; Назад</button>';
+      app.innerHTML=h;
+      app.querySelectorAll('.calc-c__radio').forEach(function(r){
+        r.addEventListener('change',function(){
+          s.answers[st.key]=r.getAttribute('data-val');
+          s.si++;
+          setTimeout(render,300);
+        });
+      });
+    } else {
+      var h='<div class="calc-c__step-label">Последний шаг</div>';
+      h+='<div class="calc-c__question">Оставьте номер телефона</div>';
+      h+='<form class="calc-c__form" id="calcCform"><input class="calc-c__input" type="tel" placeholder="+375 (__) ___-__-__" required id="calcCphone"><button type="submit" class="calc-c__submit">Получить расчёт</button></form>';
+      h+='<button class="calc-c__back" onclick="calcCback()">&larr; Назад</button>';
+      app.innerHTML=h;
+      document.getElementById('calcCform').addEventListener('submit',function(e){
+        e.preventDefault();
+        s.phone=document.getElementById('calcCphone').value;
+        s.done=true;render();
+      });
+    }
+    updatePreview();
+  }
+  window.calcCback=function(){
+    if(s.si>0){s.si--;var steps=branch(s.product);if(steps[s.si])delete s.answers[steps[s.si].key];}
+    else{s.product=null;s.answers={};s.labels={};s.si=0;}
+    render();
+  };
+  render();
+})();
+</script>
+
+</body>
+</html>
