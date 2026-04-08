@@ -1035,14 +1035,16 @@
     }
     .qz__card:active { transform:scale(0.97); }
     .qz__card-icon {
-      width:80px;height:80px;
+      height:64px;
       color:#b0b0b8;
       transition:color 200ms ease;
-      display:flex;align-items:flex-end;justify-content:center;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .qz__card-icon svg {
+      width:48px;height:48px;
     }
     .qz__card-icon img {
-      max-width:100%;max-height:100%;object-fit:contain;
-      height:60px;
+      height:100%;width:auto;
     }
     .qz__card:hover .qz__card-icon { color:var(--text,#1f1f24); }
     .qz__card-label {
