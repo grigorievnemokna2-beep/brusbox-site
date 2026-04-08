@@ -580,6 +580,10 @@ a { text-decoration: none; color: inherit; }
   border-color:var(--red); background:rgba(217,31,38,0.04);
   box-shadow:0 0 0 3px rgba(217,31,38,0.1);
 }
+.calc-c__opt-img { display:block; width:80px; height:80px; object-fit:contain; margin:0 auto 10px; }
+.calc-c__opt-box:has(.calc-c__opt-img) { text-align:center; padding:20px 16px; }
+.calc-c__opts:has(.calc-c__opt-img) { flex-direction:row; flex-wrap:wrap; gap:14px; }
+.calc-c__opts:has(.calc-c__opt-img) .calc-c__opt { flex:1; min-width:140px; }
 .calc-c__opt-name { display:block; font-size:15px; font-weight:700; color:var(--text); }
 .calc-c__opt-desc { display:block; font-size:12px; color:var(--muted); margin-top:2px; }
 .calc-c__right {

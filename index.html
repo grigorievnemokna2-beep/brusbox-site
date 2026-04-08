@@ -1693,7 +1693,7 @@
     branches: {
       windows:[
         {key:'place',title:'Куда нужны окна?',options:[{value:'Квартира',label:'В квартиру'},{value:'Дом',label:'В частный дом'},{value:'Дача',label:'На дачу'}]},
-        {key:'type',title:'Какое окно нужно?',options:[{value:'Одностворчатое',label:'Одностворчатое'},{value:'Двухстворчатое',label:'Двухстворчатое'},{value:'Трёхстворчатое',label:'Трёхстворчатое'}]}
+        {key:'type',title:'Какое окно нужно?',options:[{value:'Одностворчатое',label:'Одностворчатое',img:'assets/img/пнг для калькулятора/одностворчатое_окно.png'},{value:'Двухстворчатое',label:'Двухстворчатое',img:'assets/img/пнг для калькулятора/двухстворчатое окно.png'},{value:'Трёхстворчатое',label:'Трёхстворчатое',img:'assets/img/пнг для калькулятора/трехстворчатое_окно.png'}]}
       ],
       balconyBlock:[{key:'condition',title:'Замена или новый?',options:[{value:'Замена',label:'Замена старого блока'},{value:'Новый',label:'Новый проём'}]}],
       balconyWindows:[{key:'shape',title:'Форма балкона?',options:[{value:'Прямой',label:'Прямой'},{value:'Угловой',label:'Угловой'},{value:'П-образный',label:'П-образный'}]}],
@@ -1756,7 +1756,8 @@
       var h='<div class="calc-c__step-label">Шаг '+(s.si+2)+' из '+total(s.product)+'</div>';
       h+='<div class="calc-c__question">'+st.title+'</div><div class="calc-c__opts">';
       st.options.forEach(function(o){
-        h+='<label class="calc-c__opt"><input type="radio" name="calcC" class="calc-c__radio" data-val="'+o.value+'"><span class="calc-c__opt-box"><span class="calc-c__opt-name">'+o.label+'</span></span></label>';
+        var imgHtml=o.img?'<img src="'+o.img+'" alt="'+o.label+'" class="calc-c__opt-img">':'';
+        h+='<label class="calc-c__opt"><input type="radio" name="calcC" class="calc-c__radio" data-val="'+o.value+'"><span class="calc-c__opt-box">'+imgHtml+'<span class="calc-c__opt-name">'+o.label+'</span></span></label>';
       });
       h+='</div><button class="calc-c__back" onclick="calcCback()">&larr; Назад</button>';
       app.innerHTML=h;
