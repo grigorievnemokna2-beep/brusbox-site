@@ -1162,9 +1162,10 @@
             {value:'Трёхстворчатое',label:'Трёхстворчатое',icon:'<img src="assets/img/пнг для калькулятора/3.png" alt="Трёхстворчатое" style="width:100%;height:100%;object-fit:contain;">'}
           ]}
         ],
-        balconyBlock:[{key:'condition', title:'2. Замена или новый?', options:[
-          {value:'Замена',label:'Замена старого блока',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 105.64-8.36L3 4"/></svg>'},
-          {value:'Новый',label:'Новый проём',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>'}
+        balconyBlock:[{key:'layout', title:'2. Расположение двери?', options:[
+          {value:'Дверь слева',label:'Дверь слева',icon:'<svg viewBox="0 0 100 80" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="5" width="30" height="70" rx="2"/><rect x="37" y="15" width="58" height="60" rx="2"/><line x1="16" y1="38" x2="16" y2="44"/></svg>'},
+          {value:'Чебурашка',label:'Дверь по центру',icon:'<svg viewBox="0 0 100 80" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="15" width="25" height="60" rx="2"/><rect x="32" y="5" width="36" height="70" rx="2"/><rect x="70" y="15" width="25" height="60" rx="2"/><line x1="50" y1="38" x2="50" y2="44"/></svg>'},
+          {value:'Дверь справа',label:'Дверь справа',icon:'<svg viewBox="0 0 100 80" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="15" width="58" height="60" rx="2"/><rect x="65" y="5" width="30" height="70" rx="2"/><line x1="84" y1="38" x2="84" y2="44"/></svg>'}
         ]}],
         balconyWindows:[{key:'shape', title:'2. Форма балкона?', options:[
           {value:'Прямой',label:'Прямой',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="6" width="18" height="12" rx="1"/></svg>'},
@@ -1702,7 +1703,7 @@
         {key:'place',title:'Куда нужны окна?',options:[{value:'Квартира',label:'В квартиру'},{value:'Дом',label:'В частный дом'},{value:'Дача',label:'На дачу'}]},
         {key:'type',title:'Какое окно нужно?',options:[{value:'Одностворчатое',label:'Одностворчатое',img:'assets/img/пнг для калькулятора/1.png'},{value:'Двухстворчатое',label:'Двухстворчатое',img:'assets/img/пнг для калькулятора/2.png'},{value:'Трёхстворчатое',label:'Трёхстворчатое',img:'assets/img/пнг для калькулятора/3.png'}]}
       ],
-      balconyBlock:[{key:'condition',title:'Замена или новый?',options:[{value:'Замена',label:'Замена старого блока'},{value:'Новый',label:'Новый проём'}]}],
+      balconyBlock:[{key:'layout',title:'Расположение двери?',options:[{value:'Дверь слева',label:'Дверь слева'},{value:'Чебурашка',label:'Дверь по центру'},{value:'Дверь справа',label:'Дверь справа'}]}],
       balconyWindows:[{key:'shape',title:'Форма балкона?',options:[{value:'Прямой',label:'Прямой'},{value:'Угловой',label:'Угловой'},{value:'П-образный',label:'П-образный'}]}],
       doors:[{key:'place',title:'Куда нужна дверь?',options:[{value:'Улица',label:'На улицу'},{value:'Балкон',label:'На балкон'},{value:'Внутри',label:'Внутри помещения'}]}]
     }
@@ -1714,7 +1715,7 @@
   var preview=document.getElementById('calcCpreview');
   if(!app||!preview)return;
   var s={product:null,si:0,answers:{},labels:{},phone:'',done:false};
-  var keyNames={place:'Место',type:'Тип окна',condition:'Вариант',shape:'Форма балкона'};
+  var keyNames={place:'Место',type:'Тип окна',layout:'Расположение',condition:'Вариант',shape:'Форма балкона'};
 
   function updatePreview(){
     var wrap=document.querySelector('.calc-c');
