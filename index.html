@@ -1144,17 +1144,17 @@
 
     var QUIZ = {
       product: { title:'1. Что вас интересует?', options:[
-        {value:'windows', label:'Окна', sub:'Квартира, дом, дача', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/></svg>'},
-        {value:'balconyBlock', label:'Балконный блок', sub:'Дверь + окно', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="9" height="18" rx="1"/><rect x="13" y="3" width="9" height="18" rx="1"/><line x1="13" y1="12" x2="22" y2="12"/></svg>'},
-        {value:'balconyWindows', label:'Остекление балкона', sub:'Балкон / лоджия', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="8" y1="4" x2="8" y2="20"/><line x1="16" y1="4" x2="16" y2="20"/></svg>'},
-        {value:'doors', label:'Двери ПВХ', sub:'Входные и межкомнатные', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="2" width="16" height="20" rx="2"/><circle cx="15" cy="12" r="1" fill="currentColor"/></svg>'}
+        {value:'windows', label:'Окна', sub:'Квартира, дом, дача', icon:'<img src="assets/img/пнг для калькулятора/2.png" alt="Окна">'},
+        {value:'balconyBlock', label:'Балконный блок', sub:'Дверь + окно', icon:'<img src="assets/img/пнг для калькулятора/Балконный блок.png" alt="Балконный блок">'},
+        {value:'balconyWindows', label:'Остекление балкона', sub:'Балкон / лоджия', icon:'<img src="assets/img/пнг для калькулятора/остекление балкона.png" alt="Остекление балкона">'},
+        {value:'doors', label:'Двери ПВХ', sub:'Входные и межкомнатные', icon:'<img src="assets/img/пнг для калькулятора/Дверь ПВХ.png" alt="Двери ПВХ">'}
       ]},
       branches: {
         windows:[
           {key:'place', title:'2. Куда нужны окна?', options:[
-            {value:'Квартира',label:'В квартиру',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="8" width="16" height="14" rx="1"/><path d="M12 2L2 8h20L12 2z"/></svg>'},
-            {value:'Дом',label:'В частный дом',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12l9-9 9 9"/><path d="M5 10v10a1 1 0 001 1h12a1 1 0 001-1V10"/></svg>'},
-            {value:'Дача',label:'На дачу',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/><path d="M9 21v-6h6v6"/></svg>'}
+            {value:'Квартира',label:'В квартиру',icon:'<img src="assets/img/пнг для калькулятора/окно в квартиру.png" alt="Квартира">'},
+            {value:'Дом',label:'В частный дом',icon:'<img src="assets/img/пнг для калькулятора/частный дом.png" alt="Дом">'},
+            {value:'Дача',label:'На дачу',icon:'<img src="assets/img/пнг для калькулятора/На дачу.png" alt="Дача">'}
           ]},
           {key:'type', title:'3. Какое окно?', options:[
             {value:'Одностворчатое',label:'Одностворчатое',icon:'<img src="assets/img/пнг для калькулятора/1.png" alt="Одностворчатое" style="width:100%;height:100%;object-fit:contain;">'},
@@ -1163,19 +1163,20 @@
           ]}
         ],
         balconyBlock:[{key:'layout', title:'2. Расположение двери?', options:[
-          {value:'Дверь слева',label:'Дверь слева',icon:'<svg viewBox="0 0 100 80" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="5" width="30" height="70" rx="2"/><rect x="37" y="15" width="58" height="60" rx="2"/><line x1="16" y1="38" x2="16" y2="44"/></svg>'},
-          {value:'Чебурашка',label:'Дверь по центру',icon:'<svg viewBox="0 0 100 80" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="15" width="25" height="60" rx="2"/><rect x="32" y="5" width="36" height="70" rx="2"/><rect x="70" y="15" width="25" height="60" rx="2"/><line x1="50" y1="38" x2="50" y2="44"/></svg>'},
-          {value:'Дверь справа',label:'Дверь справа',icon:'<svg viewBox="0 0 100 80" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="15" width="58" height="60" rx="2"/><rect x="65" y="5" width="30" height="70" rx="2"/><line x1="84" y1="38" x2="84" y2="44"/></svg>'}
+          {value:'Дверь слева',label:'Дверь слева',icon:'<img src="assets/img/пнг для калькулятора/дверь слева.png" alt="Дверь слева">'},
+          {value:'Чебурашка',label:'Дверь по центру',icon:'<img src="assets/img/пнг для калькулятора/чебурашка.png" alt="Чебурашка">'},
+          {value:'Дверь справа',label:'Дверь справа',icon:'<img src="assets/img/пнг для калькулятора/дверь справа.png" alt="Дверь справа">'}
         ]}],
         balconyWindows:[{key:'shape', title:'2. Форма балкона?', options:[
-          {value:'Прямой',label:'Прямой',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="6" width="18" height="12" rx="1"/></svg>'},
-          {value:'Угловой',label:'Угловой',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h12v12H3V6z"/><path d="M15 6l6 6v6h-6"/></svg>'},
-          {value:'П-образный',label:'П-образный',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16v4H4V6z"/><rect x="4" y="10" width="6" height="8"/><rect x="14" y="10" width="6" height="8"/></svg>'}
+          {value:'Прямой',label:'Прямой',icon:'<img src="assets/img/пнг для калькулятора/Прямой балкон.png" alt="Прямой">'},
+          {value:'Г-образный',label:'Г-образный',icon:'<img src="assets/img/пнг для калькулятора/Г - образный балкон.png" alt="Г-образный">'},
+          {value:'П-образный',label:'П-образный',icon:'<img src="assets/img/пнг для калькулятора/П - образный балкон.png" alt="П-образный">'},
+          {value:'Z-образный',label:'Z-образный',icon:'<img src="assets/img/пнг для калькулятора/Z - образный балкон.png" alt="Z-образный">'}
         ]}],
         doors:[{key:'place', title:'2. Куда нужна дверь?', options:[
-          {value:'Улица',label:'На улицу',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>'},
-          {value:'Балкон',label:'На балкон',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="4" y1="12" x2="20" y2="12"/></svg>'},
-          {value:'Внутри',label:'Внутри помещения',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12l9-9 9 9"/><path d="M5 10v10a1 1 0 001 1h12a1 1 0 001-1V10"/><rect x="9" y="14" width="6" height="7"/></svg>'}
+          {value:'Улица',label:'На улицу',icon:'<img src="assets/img/пнг для калькулятора/дверь на улицу.png" alt="На улицу">'},
+          {value:'Балкон',label:'На балкон',icon:'<img src="assets/img/пнг для калькулятора/дверь пвх на балкон.png" alt="На балкон">'},
+          {value:'Внутри',label:'Внутри помещения',icon:'<img src="assets/img/пнг для калькулятора/дверь в комнату.png" alt="Внутри">'}
         ]}]
       }
     };
