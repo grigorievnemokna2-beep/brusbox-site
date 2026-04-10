@@ -1144,28 +1144,28 @@
 
     var QUIZ = {
       product: { title:'1. Что вас интересует?', options:[
-        {value:'windows', label:'Окна', sub:'Квартира, дом, дача', icon:'<img src="assets/img/пнг для калькулятора/2.png" alt="Окна">'},
-        {value:'balconyBlock', label:'Балконный блок', sub:'Дверь + окно', icon:'<img src="assets/img/пнг для калькулятора/Балконный блок.png" alt="Балконный блок">'},
-        {value:'balconyWindows', label:'Остекление балкона', sub:'Балкон / лоджия', icon:'<img src="assets/img/пнг для калькулятора/остекление балкона.png" alt="Остекление балкона">'},
-        {value:'doors', label:'Двери ПВХ', sub:'Входные и межкомнатные', icon:'<img src="assets/img/пнг для калькулятора/Дверь ПВХ.png" alt="Двери ПВХ">'}
+        {value:'windows', label:'Окна', sub:'Квартира, дом, дача', icon:'<img src="assets/img/пнг для калькулятора/окна.png" alt="Окна">'},
+        {value:'balconyBlock', label:'Балконный блок', sub:'Дверь + окно', icon:'<img src="assets/img/пнг для калькулятора/балконная блок.png" alt="Балконный блок">'},
+        {value:'balconyWindows', label:'Остекление балкона', sub:'Балкон / лоджия', icon:'<img src="assets/img/пнг для калькулятора/окна на балкон.png" alt="Остекление балкона">'},
+        {value:'doors', label:'Двери ПВХ', sub:'Входные и межкомнатные', icon:'<img src="assets/img/пнг для калькулятора/дверь пвх.png" alt="Двери ПВХ">'}
       ]},
       branches: {
         windows:[
           {key:'place', title:'2. Куда нужны окна?', options:[
-            {value:'Квартира',label:'В квартиру',icon:'<img src="assets/img/пнг для калькулятора/окно в квартиру.png" alt="Квартира">'},
+            {value:'Квартира',label:'В квартиру',icon:'<img src="assets/img/пнг для калькулятора/квартира.png" alt="Квартира">'},
             {value:'Дом',label:'В частный дом',icon:'<img src="assets/img/пнг для калькулятора/частный дом.png" alt="Дом">'},
-            {value:'Дача',label:'На дачу',icon:'<img src="assets/img/пнг для калькулятора/На дачу.png" alt="Дача">'}
+            {value:'Дача',label:'На дачу',icon:'<img src="assets/img/пнг для калькулятора/дача.png" alt="Дача">'}
           ]},
           {key:'type', title:'3. Какое окно?', options:[
-            {value:'Одностворчатое',label:'Одностворчатое',icon:'<img src="assets/img/пнг для калькулятора/1.png" alt="Одностворчатое" style="width:100%;height:100%;object-fit:contain;">'},
-            {value:'Двухстворчатое',label:'Двухстворчатое',icon:'<img src="assets/img/пнг для калькулятора/2.png" alt="Двухстворчатое" style="width:100%;height:100%;object-fit:contain;">'},
-            {value:'Трёхстворчатое',label:'Трёхстворчатое',icon:'<img src="assets/img/пнг для калькулятора/3.png" alt="Трёхстворчатое" style="width:100%;height:100%;object-fit:contain;">'}
+            {value:'Одностворчатое',label:'Одностворчатое',icon:'<img src="assets/img/пнг для калькулятора/одностворчатое окно.png" alt="Одностворчатое">'},
+            {value:'Двухстворчатое',label:'Двухстворчатое',icon:'<img src="assets/img/пнг для калькулятора/двухстворчатое окно.png" alt="Двухстворчатое">'},
+            {value:'Трёхстворчатое',label:'Трёхстворчатое',icon:'<img src="assets/img/пнг для калькулятора/трехстворстое окно.png" alt="Трёхстворчатое">'}
           ]}
         ],
         balconyBlock:[{key:'layout', title:'2. Расположение двери?', options:[
-          {value:'Дверь слева',label:'Дверь слева',icon:'<img src="assets/img/пнг для калькулятора/дверь слева.png" alt="Дверь слева">'},
-          {value:'Чебурашка',label:'Дверь по центру',icon:'<img src="assets/img/пнг для калькулятора/чебурашка.png" alt="Чебурашка">'},
-          {value:'Дверь справа',label:'Дверь справа',icon:'<img src="assets/img/пнг для калькулятора/дверь справа.png" alt="Дверь справа">'}
+          {value:'Дверь слева',label:'Дверь слева',icon:'<img src="assets/img/пнг для калькулятора/окно справа.png" alt="Дверь слева">'},
+          {value:'Чебурашка',label:'Дверь по центру',icon:'<img src="assets/img/пнг для калькулятора/два окна по бокам и дверь по середине.png" alt="Чебурашка">'},
+          {value:'Дверь справа',label:'Дверь справа',icon:'<img src="assets/img/пнг для калькулятора/окно слева.png" alt="Дверь справа">'}
         ]}],
         balconyWindows:[{key:'shape', title:'2. Форма балкона?', options:[
           {value:'Прямой',label:'Прямой',icon:'<img src="assets/img/пнг для калькулятора/Прямой балкон.png" alt="Прямой">'},
@@ -1174,9 +1174,9 @@
           {value:'Z-образный',label:'Z-образный',icon:'<img src="assets/img/пнг для калькулятора/Z - образный балкон.png" alt="Z-образный">'}
         ]}],
         doors:[{key:'place', title:'2. Куда нужна дверь?', options:[
-          {value:'Улица',label:'На улицу',icon:'<img src="assets/img/пнг для калькулятора/дверь на улицу.png" alt="На улицу">'},
-          {value:'Балкон',label:'На балкон',icon:'<img src="assets/img/пнг для калькулятора/дверь пвх на балкон.png" alt="На балкон">'},
-          {value:'Внутри',label:'Внутри помещения',icon:'<img src="assets/img/пнг для калькулятора/дверь в комнату.png" alt="Внутри">'}
+          {value:'Панорамная',label:'Панорамная',icon:'<img src="assets/img/пнг для калькулятора/Панорамная ПВХ-дверь.png" alt="Панорамная">'},
+          {value:'Комбинированная',label:'Комбинированная',icon:'<img src="assets/img/пнг для калькулятора/Комбинированная ПВХ-дверь.png" alt="Комбинированная">'},
+          {value:'Со сложной раскладкой',label:'Со сложной раскладкой',icon:'<img src="assets/img/пнг для калькулятора/ПВХ-дверь со сложной раскладкой.png" alt="Со сложной раскладкой">'}
         ]}]
       }
     };
