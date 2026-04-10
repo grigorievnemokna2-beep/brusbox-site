@@ -1427,13 +1427,13 @@ a.footer-contact:hover { color:#fff; }
     margin:16px 0 12px;
   }
   .hero-img-mobile img {
-    width:55%;
-    max-width:240px;
+    width:70%;
+    max-width:320px;
     height:auto;
     filter:drop-shadow(0 10px 20px rgba(0,0,0,0.3));
   }
   .hero-content { text-align:center; }
-  .hero-content .title { font-size:clamp(32px,8.5vw,44px) !important; text-align:center; }
+  .hero-content .title { font-size:clamp(36px,10vw,52px) !important; text-align:center; line-height:1.1; }
   .hero__subtitle { text-align:center; font-size:15px !important; margin:10px auto 16px !important; max-width:100% !important; }
   .hero-melt { max-width:100%; padding:18px 18px 14px; margin:0 auto 20px; border-radius:16px; }
   .hero-melt__amount { font-size:48px !important; }
@@ -1581,7 +1581,7 @@ a.footer-contact:hover { color:#fff; }
 /* ===== @media 480px — Small phones ===== */
 @media (max-width:480px) {
   .title { font-size:24px !important; }
-  .hero-content .title { font-size:clamp(28px,8vw,36px) !important; }
+  .hero-content .title { font-size:clamp(32px,9.5vw,44px) !important; }
   .hero-melt__amount { font-size:40px !important; }
   .hero-melt { padding:14px 14px 12px; }
   .hero-stat b { font-size:18px; }
