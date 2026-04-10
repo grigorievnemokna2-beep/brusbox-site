@@ -122,7 +122,7 @@ window.addEventListener('scroll', () => {
       ctx.fillText(segments[i].label, r*0.62, 5);
       ctx.font = '600 9px Inter, sans-serif';
       ctx.globalAlpha = 0.6;
-      ctx.fillText('BYN', r*0.62, 17);
+      ctx.fillText('руб', r*0.62, 17);
       ctx.globalAlpha = 1;
       ctx.restore();
     }
@@ -208,19 +208,19 @@ window.addEventListener('scroll', () => {
       '<div class="wheel-modal__badge">Вы выиграли</div>' +
       '<div class="wheel-modal__title">Ваша скидка</div>' +
       '<div class="wheel-result">' +
-        '<div class="wheel-result__amount">-' + val + ' BYN</div>' +
+        '<div class="wheel-result__amount">-' + val + ' руб</div>' +
         '<div class="wheel-result__label">Закрепите скидку за собой — оставьте номер</div>' +
       '</div>' +
       '<form class="wheel-form" id="wheelForm">' +
         '<input type="tel" placeholder="+375 (__) ___-__-__" required id="wheelPhone">' +
-        '<button type="submit">Забронировать -' + val + ' BYN</button>' +
+        '<button type="submit">Забронировать -' + val + ' руб</button>' +
       '</form>';
     document.getElementById('wheelForm').addEventListener('submit', function(e){
       e.preventDefault();
       var phone = document.getElementById('wheelPhone').value;
       content.innerHTML =
         '<div style="width:56px;height:56px;border-radius:50%;background:rgba(217,31,38,0.08);color:#d91f26;display:grid;place-items:center;margin:0 auto 16px;font-size:28px;">&#10003;</div>' +
-        '<div class="wheel-modal__title">Скидка ' + val + ' BYN<br>закреплена!</div>' +
+        '<div class="wheel-modal__title">Скидка ' + val + ' руб<br>закреплена!</div>' +
         '<div class="wheel-modal__sub">Номер: <b style="color:#d91f26;">' + phone + '</b><br>Перезвоним в ближайшее время</div>' +
         '<button class="wheel-spin-btn" onclick="closeWheel()" style="margin-top:16px;">Отлично</button>';
       var amountEl = document.getElementById('meltAmount');
@@ -262,7 +262,7 @@ function calculateInstallment() {
     const amount = parseInt(amountRange.value);
     const term = TERM_STEPS[parseInt(termRange.value)];
 
-    amountVal.textContent = amount + ' BYN';
+    amountVal.textContent = amount + ' руб';
     termVal.textContent = term + ' мес.';
 
     const payment = Math.round(amount / term);
